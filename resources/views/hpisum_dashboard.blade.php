@@ -1,6 +1,6 @@
 @extends('header')
 @section('content')
-
+<link rel="stylesheet" href="{{ asset('css/style.css') }}" >
 <script type="text/javascript">
     ShopifyApp.ready(function(){
         ShopifyApp.Bar.initialize({

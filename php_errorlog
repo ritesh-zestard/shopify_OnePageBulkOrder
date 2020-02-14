@@ -1,0 +1,42 @@
+[09-Feb-2020 01:54:32 CST6CDT] PHP Warning:  Uncaught ErrorException: require(/home/anujdala/domains/Shopifydev/bulkorder/vendor/composer/../../app/Helpers/Helper.php): failed to open stream: No such file or directory in /home/anujdala/domains/Shopifydev/bulkorder/vendor/composer/autoload_real.php:66
+Stack trace:
+#0 /home/anujdala/domains/Shopifydev/bulkorder/vendor/composer/autoload_real.php(66): Composer\Util\ErrorHandler::handle(2, 'require(/home/a...', '/home/anujdala/...', 66, Array)
+#1 /home/anujdala/domains/Shopifydev/bulkorder/vendor/composer/autoload_real.php(66): require()
+#2 /home/anujdala/domains/Shopifydev/bulkorder/vendor/composer/autoload_real.php(56): composerRequire665b796a642f3578e6b020129575c9ad('8fde5feda9697fe...', '/home/anujdala/...')
+#3 /home/anujdala/domains/Shopifydev/bulkorder/vendor/autoload.php(7): ComposerAutoloaderInit665b796a642f3578e6b020129575c9ad::getLoader()
+#4 /home/anujdala/domains/Shopifydev/bulkorder/vendor/laravel/framework/src/Illuminate/Foundation/ComposerScripts.php(43): require_once('/home/anujdala/...')
+#5 p in /home/anujdala/domains/Shopifydev/bulkorder/vendor/composer/autoload_real.php on line 66
+[09-Feb-2020 01:54:32 CST6CDT] PHP Fatal error:  composerRequire665b796a642f3578e6b020129575c9ad(): Failed opening required '/home/anujdala/domains/Shopifydev/bulkorder/vendor/composer/../../app/Helpers/Helper.php' (include_path='.:/usr/local/php73/pear') in /home/anujdala/domains/Shopifydev/bulkorder/vendor/composer/autoload_real.php on line 66
+[09-Feb-2020 01:58:05 CST6CDT] PHP Warning:  Uncaught ErrorException: require(/home/anujdala/domains/Shopifydev/bulkorder/vendor/composer/../../app/Helpers/Helper.php): failed to open stream: No such file or directory in /home/anujdala/domains/Shopifydev/bulkorder/vendor/composer/autoload_real.php:66
+Stack trace:
+#0 /home/anujdala/domains/Shopifydev/bulkorder/vendor/composer/autoload_real.php(66): Composer\Util\ErrorHandler::handle(2, 'require(/home/a...', '/home/anujdala/...', 66, Array)
+#1 /home/anujdala/domains/Shopifydev/bulkorder/vendor/composer/autoload_real.php(66): require()
+#2 /home/anujdala/domains/Shopifydev/bulkorder/vendor/composer/autoload_real.php(56): composerRequire665b796a642f3578e6b020129575c9ad('8fde5feda9697fe...', '/home/anujdala/...')
+#3 /home/anujdala/domains/Shopifydev/bulkorder/vendor/autoload.php(7): ComposerAutoloaderInit665b796a642f3578e6b020129575c9ad::getLoader()
+#4 /home/anujdala/domains/Shopifydev/bulkorder/vendor/laravel/framework/src/Illuminate/Foundation/ComposerScripts.php(43): require_once('/home/anujdala/...')
+#5 p in /home/anujdala/domains/Shopifydev/bulkorder/vendor/composer/autoload_real.php on line 66
+[09-Feb-2020 01:58:05 CST6CDT] PHP Fatal error:  composerRequire665b796a642f3578e6b020129575c9ad(): Failed opening required '/home/anujdala/domains/Shopifydev/bulkorder/vendor/composer/../../app/Helpers/Helper.php' (include_path='.:/usr/local/php73/pear') in /home/anujdala/domains/Shopifydev/bulkorder/vendor/composer/autoload_real.php on line 66
+[10-Feb-2020 03:57:22 CST6CDT] PHP Fatal error:  Uncaught Error: Call to a member function fetch_object() on null in /home/anujdala/domains/Shopifydev/bulkorder/uninstall.php:113
+Stack trace:
+#0 {main}
+  thrown in /home/anujdala/domains/Shopifydev/bulkorder/uninstall.php on line 113
+[10-Feb-2020 04:19:11 CST6CDT] PHP Fatal error:  Uncaught Error: Call to a member function fetch_object() on null in /home/anujdala/domains/Shopifydev/bulkorder/uninstall.php:113
+Stack trace:
+#0 {main}
+  thrown in /home/anujdala/domains/Shopifydev/bulkorder/uninstall.php on line 113
+[10-Feb-2020 06:51:34 CST6CDT] PHP Fatal error:  Uncaught Error: Call to a member function fetch_object() on null in /home/anujdala/domains/Shopifydev/bulkorder/uninstall.php:113
+Stack trace:
+#0 {main}
+  thrown in /home/anujdala/domains/Shopifydev/bulkorder/uninstall.php on line 113
+[11-Feb-2020 00:02:21 CST6CDT] PHP Fatal error:  Uncaught Error: Call to a member function fetch_object() on null in /home/anujdala/domains/Shopifydev/bulkorder/uninstall.php:113
+Stack trace:
+#0 {main}
+  thrown in /home/anujdala/domains/Shopifydev/bulkorder/uninstall.php on line 113
+[11-Feb-2020 00:06:37 CST6CDT] PHP Fatal error:  Uncaught Error: Call to a member function fetch_object() on null in /home/anujdala/domains/Shopifydev/bulkorder/uninstall.php:113
+Stack trace:
+#0 {main}
+  thrown in /home/anujdala/domains/Shopifydev/bulkorder/uninstall.php on line 113
+[13-Feb-2020 23:36:21 CST6CDT] PHP Fatal error:  Uncaught Error: Call to a member function fetch_object() on null in /home/anujdala/domains/Shopifydev/bulkorder/uninstall.php:113
+Stack trace:
+#0 {main}
+  thrown in /home/anujdala/domains/Shopifydev/bulkorder/uninstall.php on line 113

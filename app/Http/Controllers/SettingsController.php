@@ -218,7 +218,7 @@ class SettingsController extends Controller {
             }
         }
 
-        $data = array('page' => array('title' => 'One Page Quick Order', 'body_html' => '<div class="zestard_bulk_order_list_view" store_encrypt="'. $finaly_encrypt .'" style="width: 100%; text-align: center;"><img style="margin: 0 auto;" width="130" height="130" src="https://zestardshop.com/shopifyapp/bulkorder/public/image/loader_new.svg" /></div><script src="https://zestardshop.com/shopifyapp/bulkorder/public/js/one_page_quick_order.js"></script>'));
+        $data = array('page' => array('title' => 'One Page Quick Order', 'body_html' => '<div class="zestard_bulk_order_list_view" store_encrypt="'. $finaly_encrypt .'" style="width: 100%; text-align: center;"><img style="margin: 0 auto;" width="130" height="130" src="https://shopifydev.anujdalal.com/bulkorder/public/image/loader_new.svg" /></div><script src="https://shopifydev.anujdalal.com/bulkorder/public/js/one_page_quick_order.js"></script>'));
         $url_create_page = $sh->call(['URL' => '/admin/pages.json', 'METHOD' => 'POST', 'DATA' => $data ]);
         //$script_quick_order = $sh->call(['URL' => '/admin/script_tags.json', 'METHOD' => 'POST', 'DATA' => ['script_tag' => ['event' => 'onload', 'src' => 'https://shopifydev.anujdalal.com/bulk_quick_order_dev/public/js/one_page_quick_order.js', 'display_scope' => 'online_store']]]);
 

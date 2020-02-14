@@ -45,8 +45,9 @@
   <link rel="stylesheet" href="{{ asset('css/introjs.css') }}">
         <script src="{{ asset('js/intro.js') }}"></script>
     <script>
+      var appKey = "{{ env('SHOPIFY_APP_API_KEY') }}";
       ShopifyApp.init({
-        apiKey: '3b74510dbc98e99200509223407d2e4b',
+        apiKey: appKey,
         shopOrigin: '<?php echo "https://".session('shop'); ?>'
       });
 

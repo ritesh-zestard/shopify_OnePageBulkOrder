@@ -49,13 +49,15 @@
                                         echo "checked";
                                     }
                                 } ?> onChange="product_select_model($(this).val())" ></td>
-                            <td><img src="{{ $product->image->src }}" width="50px" height="50px"/></td>
+                            <td><?php if(count($product->image) > 0){ ?><img src="{{ $product->image->src }}" width="50px" height="50px"/><?php } ?></td>
                             <td>{{ $product->title }}</td>
+
                             <td>{{ $currency }}{{ $product->variants[0]->price }}</td>
                         </tr>
                     @endforeach
                     </tbody>    
                 </table>
+
             <form name="addProduct" action="{{ url('update_products') }}">
                 <input type="hidden" id="selected_product" name="selected_product" @if(count($selected_products > 0)) value='<?php echo json_encode($selected_products); ?>'@endif>
                 <input type="submit" class="btn" id="save_update_products" value="Save"/>
