@@ -1,0 +1,88 @@
+/* Backend page */
+
+body {
+    font-family: 'Muli', sans-serif;
+    background-color: #efefef;
+}
+nav {
+    color: #fff;
+    background-color: rgba(31, 152, 234, 0.82);
+    width: 100%;
+    height: 64px;
+}
+.navbar{
+    margin-bottom: 0px;
+    border: none;
+}
+p.brand-logo.center a {
+    color: #fff;
+    font-size: 28px;
+}
+a.help {
+    float: right;
+    color: rgb(255, 255, 255);
+    background-color: rgb(15, 105, 148);
+    text-align: center;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: 0.2s ease-out;
+    display: inline-block;
+    line-height: 36px;
+    text-transform: uppercase;
+    padding: 0px 2rem;
+    box-shadow: 2px 2px 2px #444;
+    margin-top: 12px;
+    font-size: 14px !important;
+}
+nav .brand-logo {
+    position: absolute;
+    color: #fff;
+    display: inline-block;
+    font-size: 2.1rem;
+    padding: 0;
+    line-height: 64px;
+    width: 100%;
+    text-align: center;
+}
+a:focus {
+    text-decoration: none;
+}
+.basic-container {
+    display: inline-block;
+    width: 100%;
+    padding: 35px 20px 20px 20px;
+}
+.dashboardpage .col-md-3 {
+    padding: 0;
+    margin: 0 5px;
+    max-width: 257px;
+}
+a:hover{
+    text-decoration: none;
+}
+.dashboardpage i {
+    color: #313131;
+}
+.alert.show {
+    padding: 10px;
+    margin-bottom: 15px;
+}
+.alert-dismissable .close{
+    right: 0px;
+}
+
+/* Basic App Help Page */
+.card {
+    position: relative;
+    overflow: hidden;
+    margin: 3.5rem 0 1rem 0;
+    background-color: #fff;
+    border-radius: 2px;
+    box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
+}
+.card .card-content {
+    padding: 20px;
+    border-radius: 0 0 2px 2px;
+}
+
