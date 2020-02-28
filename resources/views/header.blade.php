@@ -73,6 +73,21 @@
                 z-index: 100;
             }
     </style>
+<!-- HumDash -->
+<script type="text/javascript">
+  var _ha = window._ha || [];
+  /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
+  _ha.push(['trackPageView']);
+  _ha.push(['enableLinkTracking']);
+  (function() {
+    var u="https://app.humcommerce.com/";
+    _ha.push(['setTrackerUrl', u+'humdash.php']);
+    _ha.push(['setSiteId', '2049']);
+    var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+    g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'humdash.js'; s.parentNode.insertBefore(g,s);
+  })();
+</script>
+<!-- End HumDash Code -->
   </head>
 
   <body>
