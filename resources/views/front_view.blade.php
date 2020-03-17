@@ -1,4 +1,4 @@
-<link rel="stylesheet" href="https://zestardshop.com/shopifyapp/bulkorder/public/js/jquery.fancybox.css">
+<link rel="stylesheet" href="https://shopifydev.anujdalal.com/bulkorder/public/js/jquery.fancybox.css">
 <link rel="stylesheet" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css">
 <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.2.1/css/responsive.dataTables.min.css">
 <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
@@ -264,6 +264,7 @@ $ztpl_one_page_quick_order(document).ready(function () {
         "serverSide": true,
         "ordering": false,
         "responsive": true,
+		"info":false,
         "dom": "<'row'<'col-sm-3'l><'col-sm-3'f><'col-sm-6'p>>" +
 "<'row'<'col-sm-12'tr>>" +
 "<'row'<'col-sm-5'i><'col-sm-7'p>>",

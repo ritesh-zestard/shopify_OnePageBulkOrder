@@ -16,6 +16,7 @@ class hpisumController extends Controller
 {
     public function index()
     {
+
         $sh = App::make('ShopifyAPI');
         $app_settings = DB::table('appsettings')->where('id', 1)->first();
         $shop = session('shop');

@@ -1,7 +1,7 @@
 <!-- Bootstrap core CSS -->
 <?php print_r(shop_find); ?>
-<link rel="stylesheet" href="https://zestardshop.com/shopifyapp/bulkorder/public/css/bootstrap.css" >
-<script src="https://zestardshop.com/shopifyapp/bulkorder/public/js/money.js"></script>
+<link rel="stylesheet" href="https://shopifydev.anujdalal.com/bulkorder/public/css/bootstrap.css" >
+<script src="https://shopifydev.anujdalal.com/bulkorder/public/js/money.js"></script>
 <script>
     //  jQuery('.page-header').html('<h2>sdsd</h2>');
 
@@ -44,7 +44,7 @@
         if (!Shopify.formatMoney) {
             var jq = document.createElement("script");
             jq.type = "text/javascript";
-            jq.src = "https://zestardshop.com/shopifyapp/bulkorder/public/js/money.js";
+            jq.src = "https://shopifydev.anujdalal.com/bulkorder/public/js/money.js";
             document.getElementsByTagName("head")[0].appendChild(jq);
         }
         var currency_symbol = $(".bulkorder").attr('mony_format');
@@ -53,7 +53,7 @@
         var additional_css = "";
         //for reset all data
         $.ajax({
-            url: "https://zestardshop.com/shopifyapp/bulkorder/public/get-user-settings",
+            url: "https://shopifydev.anujdalal.com/bulkorder/public/get-user-settings",
             data: {shop: Shopify.shop},
             asunc: false,
             success: function (result)

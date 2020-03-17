@@ -9,6 +9,10 @@ use DB;
 
 class FrontendController extends Controller {
 
+    public function __construct() {
+        $this->apiVersion = env('API_VERSION');
+    }
+
     public function frontend(request $request) {
         $shop = session('shop');
         $app_settings = DB::table('appsettings')->where('id', 1)->first();
@@ -17,13 +21,13 @@ class FrontendController extends Controller {
 
         $sh = App::make('ShopifyAPI', ['API_KEY' => $app_settings->api_key, 'API_SECRET' => $app_settings->shared_secret, 'SHOP_DOMAIN' => $shop, 'ACCESS_TOKEN' => $select_store[0]->access_token]);
 
-        $url = 'https://' . $shop . '/admin/products.json';
+        $url = 'https://' . $shop . '/admin/api/' . $this->apiVersion . '/products.json';
 
-        $count = $sh->call(['URL' => '/admin/products/count.json', 'METHOD' => 'GET']);
+        $count = $sh->callAdvanceAdvance(['URL' => '/admin/api/' . $this->apiVersion . '/products/count.json', 'METHOD' => 'GET']);
 
         $app_config = DB::table('appconfig')->where('store_id', $select_store[0]->id)->first();
 
-        //$products = $sh->call(['URL' => $url, 'METHOD' => 'GET'], false);
+        //$products = $sh->callAdvance(['URL' => $url, 'METHOD' => 'GET'], false);
 
         $get_products = array();
 
@@ -31,9 +35,9 @@ class FrontendController extends Controller {
             $pages = ceil($count->count / 10);
 
             for ($i = 0; $i < $pages; $i++) {
-                $url = 'https://' . $shop . '/admin/products.json?limit=10&page=' . ($i + 1);
+                $url = 'https://' . $shop . '/admin/api/' . $this->apiVersion . '/products.json?limit=10&page=' . ($i + 1);
 
-                $products = $sh->call(['URL' => $url, 'METHOD' => 'GET'], FALSE);
+                $products = $sh->callAdvance(['URL' => $url, 'METHOD' => 'GET'], FALSE);
 
                 foreach ($products->products as $row) {
                     $get_products[] = $row;
@@ -41,8 +45,7 @@ class FrontendController extends Controller {
             }
         }
         //dd($get_products);
-        // $url = 'https://' . $shop . '/admin/products.json?limit=15';
-        // $products = $sh->call(['URL' => $url, 'METHOD' => 'GET'], FALSE);
+        // $products = $sh->callAdvance(['URL' => $url, 'METHOD' => 'GET'], FALSE);
         // $get_products = $products->products;
         //dd($get_products);
         if ($select_store[0]->status == "active" and $app_config->app_status == 1) {
@@ -67,11 +70,9 @@ class FrontendController extends Controller {
         $app_config = DB::table('appconfig')->where('store_id', $select_store[0]->id)->first();
 
         $sh = App::make('ShopifyAPI', ['API_KEY' => $app_settings->api_key, 'API_SECRET' => $app_settings->shared_secret, 'SHOP_DOMAIN' => $shop, 'ACCESS_TOKEN' => $select_store[0]->access_token]);
-        //   GET /admin/products/#{product_id}/variants.json
         $product_id = $_POST['product_id'];
-        $url = 'https://' . $shop . '/admin/products/' . $product_id . '.json';
-        $row = $sh->call(['URL' => $url, 'METHOD' => 'GET'], FALSE);
-
+        $url = 'https://' . $shop . '/admin/api/' . $this->apiVersion . '/' . $product_id . '.json';
+        $row = $sh->callAdvance(['URL' => $url, 'METHOD' => 'GET'], FALSE);
         echo '<section class="items">';
         echo '<table id="sub_product" class="table_product">';
         echo '<thead>';
@@ -174,21 +175,21 @@ class FrontendController extends Controller {
         $app_settings = DB::table('appsettings')->where('id', 1)->first();
         $select_store = DB::table('usersettings')->where('store_name', $shop)->get();
         $sh = App::make('ShopifyAPI', ['API_KEY' => $app_settings->api_key, 'API_SECRET' => $app_settings->shared_secret, 'SHOP_DOMAIN' => $shop, 'ACCESS_TOKEN' => $select_store[0]->access_token]);
-        $url = 'https://' . $shop . '/admin/products.json';
-        $count = $sh->call(['URL' => '/admin/products/count.json', 'METHOD' => 'GET']);
+        $url = 'https://' . $shop . '/admin/api/' . $this->apiVersion . '/products.json';
+        $count = $sh->callAdvance(['URL' => '/admin/api/' . $this->apiVersion . '/products/count.json', 'METHOD' => 'GET']);
         $product_count = $count->count;
         $draw = $_REQUEST['draw'];
         $search = $_REQUEST['search']['value'];
         $start = $_REQUEST['start'];
         $total_products = array('draw' => $draw, 'recordsTotal' => $product_count, 'recordsFiltered' => $product_count);
-        $products = $sh->call(['URL' => $url, 'METHOD' => 'GET'], false);
+        $products = $sh->callAdvance(['URL' => $url, 'METHOD' => 'GET'], false);
 
         if ($search) {
             $pages = ceil($product_count / 250);
             $limit = 250;
             for ($i = 0; $i < $pages; $i++) {
                 $current_page = $i + 1;
-                $product_list = $sh->call(['URL' => '/admin/products.json?limit=' . $limit . '&page=' . $current_page, 'METHOD' => 'GET']);
+                $product_list = $sh->callAdvance(['URL' => '/admin/api/' . $this->apiVersion . '/products.json?limit=' . $limit . '&page=' . $current_page, 'METHOD' => 'GET']);
                 //echo "<pre>"; print_r($product_list); die;
                 foreach ($product_list->products as $product) {
                     if (stristr($product->title, $search)) {
@@ -213,9 +214,9 @@ class FrontendController extends Controller {
         $limit = $request['length'];
         $draw = $request['draw'];
         $start = $request['start'];
+        $length = $request['length'];
         $current_page = ceil($start / $limit) + 1;
         $search = $request['search']['value'];
-        //dd($search);
         if ($shop == 'bewickedusa.com') {
             $shop = 'bewicked.myshopify.com';
         }
@@ -238,135 +239,172 @@ class FrontendController extends Controller {
         //dd($sort_order->sort_order);
         $sh = App::make('ShopifyAPI', ['API_KEY' => $app_settings->api_key, 'API_SECRET' => $app_settings->shared_secret, 'SHOP_DOMAIN' => $shop, 'ACCESS_TOKEN' => $select_store[0]->access_token]);
         //dd($sh);
-        $url = 'https://' . $shop . '/admin/products.json';
+        $url = 'https://' . $shop . '/admin/api/' . $this->apiVersion . '/products.json';
 
-        $count = $sh->call(['URL' => '/admin/products/count.json', 'METHOD' => 'GET']);
+        $count = $sh->callAdvance(['URL' => '/admin/api/' . $this->apiVersion . '/products/count.json', 'METHOD' => 'GET']);
 
         $get_products = array();
         if ($count->count > 0) {
-
             //for the search
             if ($search) {
                 $key = 0;
                 $pages = ceil($count->count / 250);
                 $limit = 250;
-                for ($i = 0; $i < $pages; $i++) {
-                    $current_page = $i + 1;
-                    $products = $sh->call(['URL' => '/admin/products.json?title=' . $search . '&limit=' . $limit . '&page=' . $current_page, 'METHOD' => 'GET']);
-                    foreach ($products->products as $row) {
-                        if (stristr($row->title, $search)) {
-                            //for image
-                            if (count($row->images) != 0) {
-                                $image_url = '<img src="' . $row->images[0]->src . '" class="product_image">';
-                            } else {
-                                $image_url = '<img src="' . url('/images/no-image-available.png') . '" class="product_image">';
-                            }
+                $i = 0;
+                do {
+                        if ($i == 0) {
+                            $products = $sh->callAdvance(['URL' => '/admin/api/' . $this->apiVersion . '/products.json?limit=' . $limit . '&page_info=', 'METHOD' => 'GET']);
+                        } else {
+                            $products = $sh->callAdvance(['URL' => '/admin/api/' . $this->apiVersion . '/products.json?limit=' . $limit . '&page_info=' . $params['page_info'], 'METHOD' => 'GET']);
+                        } 
+                        $i++;
+			
 
-                            //for the button
-                            if ($row->variants[0]->inventory_quantity == 0) {
-                                $action_field = '<button type="button" class="sold_out all_btn" disabled="disabled" style="color:' . ($app_config->sold_out_text_color == '' ? '#ffffff' : $app_config->sold_out_text_color) . ';background-color:' . ($app_config->sold_out_background_color == '' ? '#403b37' : $app_config->sold_out_background_color) . '">' . ($app_config->sold_out_text == '' ? 'Sold Out' : $app_config->sold_out_text) . '</button>';
-                            } else {
-                                if (count($row->variants) == 1) {
-                                    $action_field = '<button type="button" class="button text-uc my-btn add_to_cart_btn all_btn" onclick="return addToCart(' . $row->variants[0]->id . ')" style="width:auto;color:' . $app_config->add_to_cart_text_color . ';background-color:' . $app_config->add_to_cart_background_color . '">' . $app_config->add_to_cart_text . '</button>';
+                        foreach ($products->products as $row) {
+							
+                            if (stristr($row->title, $search)) {
+								
+                                //for image
+                                if (count($row->images) != 0) {
+                                    $image_url = '<img src="' . $row->images[0]->src . '" class="product_image">';
                                 } else {
-                                    $action_field = '<input type="button" value="' . $app_config->show_options_text . '" p_id=' . $row->id . ' class="all_btn fancybox show_option_' . $key . '" id="show_options" data-toggle="collapse" data-target="#demo_' . $key . '" style="color:' . $app_config->show_options_text_color . ';background-color:' . $app_config->show_options_background_color . '">';
+                                    $image_url = '<img src="' . url('/images/no-image-available.png') . '" class="product_image">';
                                 }
-                            }
 
-                            //for quantity
-                            if (count($row->variants) == 1 && $row->variants[0]->inventory_quantity != 0) {
-                                $quantity_field = '<input type="text" class="quntity-input" id="qty_outer_' . $row->variants[0]->id . '" value="1" min="1" />';
-                            } else {
-                                $quantity_field = "";
-                            }
+                                //for the button
+                                if ($row->variants[0]->inventory_quantity == 0) {
+                                    $action_field = '<button type="button" class="sold_out all_btn" disabled="disabled" style="color:' . ($app_config->sold_out_text_color == '' ? '#ffffff' : $app_config->sold_out_text_color) . ';background-color:' . ($app_config->sold_out_background_color == '' ? '#403b37' : $app_config->sold_out_background_color) . '">' . ($app_config->sold_out_text == '' ? 'Sold Out' : $app_config->sold_out_text) . '</button>';
+                                } else {
+                                    if (count($row->variants) == 1) {
+                                        $action_field = '<button type="button" class="button text-uc my-btn add_to_cart_btn all_btn" onclick="return addToCart(' . $row->variants[0]->id . ')" style="width:auto;color:' . $app_config->add_to_cart_text_color . ';background-color:' . $app_config->add_to_cart_background_color . '">' . $app_config->add_to_cart_text . '</button>';
+                                    } else {
+                                        $action_field = '<input type="button" value="' . $app_config->show_options_text . '" p_id=' . $row->id . ' class="all_btn fancybox show_option_' . $key . '" id="show_options" data-toggle="collapse" data-target="#demo_' . $key . '" style="color:' . $app_config->show_options_text_color . ';background-color:' . $app_config->show_options_background_color . '">';
+                                    }
+                                }
 
-                            //for sku
-                            if ($app_config->display_sku == 1) {
-                                $product_sku = $row->variants[0]->sku;
-                            } else {
-                                $product_sku = "";
-                            }
+                                //for quantity
+                                if (count($row->variants) == 1 && $row->variants[0]->inventory_quantity != 0) {
+                                    $quantity_field = '<input type="text" class="quntity-input" id="qty_outer_' . $row->variants[0]->id . '" value="1" min="1" />';
+                                } else {
+                                    $quantity_field = "";
+                                }
 
-                            $sort_order_array = json_decode($sort_order->sort_order);
+                                //for sku
+                                if ($app_config->display_sku == 1) {
+                                    $product_sku = $row->variants[0]->sku;
+                                } else {
+                                    $product_sku = "";
+                                }
 
-                            if ($app_config->display_sku == 1) {
-                                $new_row = $this->return_sequence_with_sku($sort_order_array, $image_url, $row->title, $row->variants['0']->price, $quantity_field, $product_sku, $action_field);
-                            } else {
-                                $new_row = $this->return_sequence_without_sku($sort_order_array, $image_url, $row->title, $row->variants['0']->price, $quantity_field, $action_field);
+                                $sort_order_array = json_decode($sort_order->sort_order);
+
+                                if ($app_config->display_sku == 1) {
+                                    $new_row = $this->return_sequence_with_sku($sort_order_array, $image_url, $row->title, $row->variants['0']->price, $quantity_field, $product_sku, $action_field);
+                                } else {
+                                    $new_row = $this->return_sequence_without_sku($sort_order_array, $image_url, $row->title, $row->variants['0']->price, $quantity_field, $action_field);
+                                }
+								
+									
+                                //dd($new_row);
+                                //$new_row = array($image_url,$row->title,$row->variants['0']->price,$quantity_field,$row->variants[0]->sku,$action_field);
+                                $get_products['data'][] = $new_row;
                             }
-                            //dd($new_row);
-                            //$new_row = array($image_url,$row->title,$row->variants['0']->price,$quantity_field,$row->variants[0]->sku,$action_field);
-                            $get_products[] = $new_row;
+                            $key++;
                         }
+                        //dd($products);
+                    if (isset($product_list->headers['Link'])) {
+                        $next = $product_list->headers['Link'];
+                        $page_params = explode(',', $next);
+                        if (isset($page_params[1])) {
+                            $next_url = explode(',', $page_params[1]);
+                        } else {
+                            $next_url = explode(',', $page_params[0]);
+                        }
+                        $str = substr($next_url[0], 1, -1);
+                        $url_components = parse_url(substr($str, 0, strpos($str, ">")));
+                        parse_str($url_components['query'], $params);
+                    }
+                } while (isset($page_params) && (count($page_params) == 2 || $i == 1));
+            } else {
+                $i = 0;
+                do {
+                    $pages = ceil($count->count / 10);
+                    $key = 0;
+                    if ($i == 0) {
+                        $url = 'https://' . $shop . '/admin/api/' . $this->apiVersion . '/products.json?limit=' . $limit . '&page_info=';
+                    } else {
+                        $url = 'https://' . $shop . '/admin/api/' . $this->apiVersion . '/products.json?limit=' . $limit . '&page_info=' . $params['page_info'];
+                    }
+                    $products = $sh->callAdvance(['URL' => $url, 'METHOD' => 'GET'], FALSE);
+                    $i++;
+                    foreach ($products->products as $row) {
+                        //for image
+                        if (count($row->images) != 0) {
+                            $image_url = '<img src="' . $row->images[0]->src . '" class="product_image">';
+                        } else {
+                            $image_url = '<img src="' . url('/images/no-image-available.png') . '" class="product_image">';
+                        }
+                        //for the button
+                        if ($row->variants[0]->inventory_quantity == 0) {
+                            $action_field = '<button type="button" class="sold_out all_btn" disabled="disabled" style="color:' . ($app_config->sold_out_text_color == '' ? '#ffffff' : $app_config->sold_out_text_color) . ';background-color:' . ($app_config->sold_out_background_color == '' ? '#403b37' : $app_config->sold_out_background_color) . '">' . ($app_config->sold_out_text == '' ? 'Sold Out' : $app_config->sold_out_text) . '</button>';
+                        } else {
+                            if (count($row->variants) == 1) {
+                                $action_field = '<button type="button" class="button text-uc my-btn add_to_cart_btn all_btn" onclick="return addToCart(' . $row->variants[0]->id . ')" style="color:' . $app_config->add_to_cart_text_color . ';background-color:' . $app_config->add_to_cart_background_color . '">' . $app_config->add_to_cart_text . '</button>';
+                            } else {
+                                $action_field = '<input type="button" value="' . $app_config->show_options_text . '" p_id=' . $row->id . ' class="all_btn fancybox show_option_' . $key . '" id="show_options" data-toggle="collapse" data-target="#demo_' . $key . '" style="color:' . $app_config->show_options_text_color . ';background-color:' . $app_config->show_options_background_color . '">';
+                            }
+                        }
+
+                        //for quantity
+                        if (count($row->variants) == 1 && $row->variants[0]->inventory_quantity != 0) {
+                            $quantity_field = '<input type="text" class="quntity-input" id="qty_outer_' . $row->variants[0]->id . '" value="1" min="1" />';
+                        } else {
+                            $quantity_field = "";
+                        }
+
+                        //for sku
+                        if ($app_config->display_sku == 1) {
+                            $product_sku = $row->variants[0]->sku;
+                        } else {
+                            $product_sku = "";
+                        }
+
+                        $sort_order_array = json_decode($sort_order->sort_order);
+
+                        if ($app_config->display_sku == 1) {
+                            $new_row = $this->return_sequence_with_sku($sort_order_array, $image_url, $row->title, $row->variants['0']->price, $quantity_field, $product_sku, $action_field);
+                        } else {
+                            $new_row = $this->return_sequence_without_sku($sort_order_array, $image_url, $row->title, $row->variants['0']->price, $quantity_field, $action_field);
+                        }
+                        $get_products['data'][] = $new_row;
                         $key ++;
                     }
-                    //dd($products);
-                }
-            } else {
-                $pages = ceil($count->count / 10);
-                $key = 0;
-                $url = 'https://' . $shop . '/admin/products.json?limit=' . $limit . '&page=' . $current_page;
-
-                $products = $sh->call(['URL' => $url, 'METHOD' => 'GET'], FALSE);
-
-                foreach ($products->products as $row) {
-                    //for image
-                    if (count($row->images) != 0) {
-                        $image_url = '<img src="' . $row->images[0]->src . '" class="product_image">';
-                    } else {
-                        $image_url = '<img src="' . url('/images/no-image-available.png') . '" class="product_image">';
-                    }
-
-                    //for the button
-                    if ($row->variants[0]->inventory_quantity == 0) {
-                        $action_field = '<button type="button" class="sold_out all_btn" disabled="disabled" style="color:' . ($app_config->sold_out_text_color == '' ? '#ffffff' : $app_config->sold_out_text_color) . ';background-color:' . ($app_config->sold_out_background_color == '' ? '#403b37' : $app_config->sold_out_background_color) . '">' . ($app_config->sold_out_text == '' ? 'Sold Out' : $app_config->sold_out_text) . '</button>';
-                    } else {
-                        if (count($row->variants) == 1) {
-                            $action_field = '<button type="button" class="button text-uc my-btn add_to_cart_btn all_btn" onclick="return addToCart(' . $row->variants[0]->id . ')" style="color:' . $app_config->add_to_cart_text_color . ';background-color:' . $app_config->add_to_cart_background_color . '">' . $app_config->add_to_cart_text . '</button>';
+                    if (isset($products->headers['Link'])) {
+                        $next = $products->headers['Link'];
+                        $page_params = explode(',', $next);
+                        if (isset($page_params[1])) {
+                            $next_url = explode(',', $page_params[1]);
                         } else {
-                            $action_field = '<input type="button" value="' . $app_config->show_options_text . '" p_id=' . $row->id . ' class="all_btn fancybox show_option_' . $key . '" id="show_options" data-toggle="collapse" data-target="#demo_' . $key . '" style="color:' . $app_config->show_options_text_color . ';background-color:' . $app_config->show_options_background_color . '">';
+                            $next_url = explode(',', $page_params[0]);
                         }
+                        $str = substr($next_url[0], 1, -1);
+                        $url_components = parse_url(substr($str, 0, strpos($str, ">")));
+                        parse_str($url_components['query'], $params);
                     }
-
-                    //for quantity
-                    if (count($row->variants) == 1 && $row->variants[0]->inventory_quantity != 0) {
-                        $quantity_field = '<input type="text" class="quntity-input" id="qty_outer_' . $row->variants[0]->id . '" value="1" min="1" />';
-                    } else {
-                        $quantity_field = "";
-                    }
-
-                    //for sku
-                    if ($app_config->display_sku == 1) {
-                        $product_sku = $row->variants[0]->sku;
-                    } else {
-                        $product_sku = "";
-                    }
-
-                    $sort_order_array = json_decode($sort_order->sort_order);
-
-                    if ($app_config->display_sku == 1) {
-                        $new_row = $this->return_sequence_with_sku($sort_order_array, $image_url, $row->title, $row->variants['0']->price, $quantity_field, $product_sku, $action_field);
-                    } else {
-                        $new_row = $this->return_sequence_without_sku($sort_order_array, $image_url, $row->title, $row->variants['0']->price, $quantity_field, $action_field);
-                    }
-                    $get_products[] = $new_row;
-                    $key ++;
-                }
+                } while (isset($page_params) && (count($page_params) == 2 || $i == 1));
             }
 
-
-
-            //}
+            $return_arr = array();
+            for ($i = $start; $i < $start + $length; $i++) {
+                if (isset($get_products['data'][$i])) {
+                    $return_arr[] = $get_products['data'][$i];
+                } else {
+                    break;
+                }
+            }
+            $get_products['data'] = $return_arr;
+            return json_encode($get_products);
         }
-        //dd($get_products);
-        $all_products = [
-            "draw" => $draw,
-            "recordsTotal" => $count->count,
-            "recordsFiltered" => $count->count,
-            'data' => $get_products
-        ];
-
-        return $all_products;
     }
 
     public function return_sequence_with_sku($sort_order_array, $image_url, $title, $price, $quantity, $sku, $action_field) {
@@ -532,16 +570,18 @@ class FrontendController extends Controller {
 
         $select_store = DB::table('usersettings')->where('store_name', $shop)->get();
         $sh = App::make('ShopifyAPI', ['API_KEY' => $app_settings->api_key, 'API_SECRET' => $app_settings->shared_secret, 'SHOP_DOMAIN' => $shop, 'ACCESS_TOKEN' => $select_store[0]->access_token]);
-        $url = 'https://' . $shop . '/admin/products.json';
-        $count = $sh->call(['URL' => '/admin/products/count.json', 'METHOD' => 'GET']);
+        $url = 'https://' . $shop . '/admin/api/' . $this->apiVersion . '/products.json';
+        $count = $sh->callAdvance(['URL' => '/admin/api/' . $this->apiVersion . '/products/count.json', 'METHOD' => 'GET']);
 
         $app_config = DB::table('appconfig')->where('store_id', $select_store[0]->id)->first();
-        //$products = $sh->call(['URL' => $url, 'METHOD' => 'GET'], false);
+        //$products = $sh->callAdvance(['URL' => $url, 'METHOD' => 'GET'], false);
         $sort_order = DB::table('field_sorting_details')->where('shop_id', $select_store[0]->id)->first();
         //dd($sort_order->sort_order);
         $get_products = array();
-        $url = 'https://' . $shop . '/admin/products.json?limit=10&page=1';
-        $products = $sh->call(['URL' => $url, 'METHOD' => 'GET'], FALSE);
+        $url = 'https://' . $shop . '/admin/api/' . $this->apiVersion . '/products.json?limit=10&&page_info=';
+
+
+        $products = $sh->callAdvance(['URL' => $url, 'METHOD' => 'GET'], FALSE);
         foreach ($products->products as $row) {
             $get_products[] = $row;
         }
