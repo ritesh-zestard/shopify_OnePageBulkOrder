@@ -1,7 +1,7 @@
 @extends('header')
 @section('content')
 <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-<script src="https://shopifydev.anujdalal.com/one_page_quick_order/public/js/jquery-ui.js"></script>
+<script src="https://zestardshop.com/shopifyapp/one_page_quick_order/public/js/jquery-ui.js"></script>
 <style>
     .copystyle_wrapper
     {
