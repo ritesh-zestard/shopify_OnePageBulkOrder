@@ -38,7 +38,8 @@ class callbackController extends Controller {
                 $charge_status = $select_store[0]->status;
                 if (!empty($charge_id) && $charge_id > 0 && $charge_status == "active") {
                     session(['shop' => $shop]);
-                    return redirect()->route('dashboard', ['shop' => $shop]);
+                    // return redirect()->route('dashboard', ['shop' => $shop]);
+                    return redirect()->route('new_dashboard', ['shop' => $shop]);
                 } else {
                     return redirect()->route('payment_process', ['shop' => $shop]);
                 }
@@ -74,7 +75,8 @@ class callbackController extends Controller {
                 $charge_status = $select_store[0]->status;
                 if (!empty($charge_id) && $charge_id > 0 && $charge_status == "active") {
                     session(['shop' => $shop]);
-                    return redirect()->route('dashboard', ['shop' => $shop]);
+                    return redirect()->route('new_dashboard', ['shop' => $shop]);
+                    // return redirect()->route('dashboard', ['shop' => $shop]);
                 } else {
                     return redirect()->route('payment_process');
                 }
@@ -476,6 +478,10 @@ class callbackController extends Controller {
         //return view('dashboard', ['store_detail' => $currency_format, 'app_currency' => $currencyformat_app, 'currency' => $all_currency, 'shop_details' => $shop_find, 'shop_domain' => $shop_domain, 'new_install' => $new_install ]);
     }
 
+    public function NewDashboard(Request $request) {
+        return view('new_dashboard');
+    }
+
     public function payment_method(Request $request) {
         $shop = session('shop');
         $app_settings = DB::table('appsettings')->where('id', 1)->first();
@@ -517,7 +523,8 @@ class callbackController extends Controller {
                     $Activatecharge_array = get_object_vars($Activate_charge);
                     $active_status = $Activatecharge_array['recurring_application_charge']->status;
                     $update_charge_status = DB::table('usersettings')->where('store_name', $shop)->where('charge_id', $charge_id)->update(['status' => $active_status]);
-                    return redirect()->route('dashboard', ['shop' => $shop]);
+                    return redirect()->route('new_dashboard', ['shop' => $shop]);
+                    // return redirect()->route('dashboard', ['shop' => $shop]);
                 }
             }
         }
@@ -562,7 +569,8 @@ class callbackController extends Controller {
             }
 
 
-            return redirect()->route('dashboard', ['shop' => $shop]);
+            return redirect()->route('new_dashboard', ['shop' => $shop]);
+            // return redirect()->route('dashboard', ['shop' => $shop]);
         } elseif ($status == "declined") {
             echo '<script>window.top.location.href="https://' . $shop . '/admin/apps"</script>';
         }

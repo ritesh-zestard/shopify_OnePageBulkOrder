@@ -12,6 +12,7 @@ if (!session('shop')) {
 <script type="text/javascript">
     ShopifyApp.ready(function (e) {
         ShopifyApp.Bar.initialize({
+            title:'Quick order Help',
             buttons: {
                 secondary: [
                     {
@@ -23,6 +24,16 @@ if (!session('shop')) {
                         label: 'Quick Order Settings',
                         href: '{{ url('quick_order_dashboard_save') }}?shop=<?php echo $shop; ?>',
                         loading: false
+                    },
+                    {
+                        label: 'Bulk order Help',
+                        href: '{{ url('help') }}?shop=<?php echo $shop; ?>',
+                        loading: false
+                    },
+                    {
+                        label: 'Dashboard',
+                        href: '{{ url('new_dashboard') }}',
+                        loading: true
                     }
                 ]
             }
@@ -60,7 +71,7 @@ if (Session::has('shop')) {
                 <div class="col-md-12 col-sm-12 col-xs-12">
                     <ul class="dd-help-ul">
                         <li><span>Developer: </span><a target="_blank" href="https://www.zestard.com">Zestard Technologies Pvt Ltd</a></li>
-                        <li><span>Email: </span><a href="mailto:support@zestard.com">support@zestard.com</a></li>
+                        <li><span>Email: </span><a href="mailto:support@zestard.com" target="_top">support@zestard.com</a></li>
                         <li><span>Website: </span><a target="_blank" href="https://www.zestard.com">https://www.zestard.com</a></li>
                     </ul>
                 </div>
