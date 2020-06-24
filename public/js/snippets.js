@@ -6,7 +6,7 @@ $(document).ready(function(){
   var allowed_month = '';
   var date_formate = '';
   $.ajax({
-		url: "https://shopifydev.anujdalal.com/bulkorder/public/getconfig",
+		url: "https://shopifydev.anujdalal.com/bulkorder-demo-new/public/getconfig",
 		dataType: "json",
     	data:{shop:shop_name},
 		success: function(data) {

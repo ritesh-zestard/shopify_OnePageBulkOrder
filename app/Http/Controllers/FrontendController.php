@@ -55,7 +55,7 @@ class FrontendController extends Controller {
         //return view('front_view', ['products' => $get_products, 'app_config' => $app_config]);
     }
 
-    public function show_variants() {
+    public function show_variants(Request $request) {
         $shop = session('shop');
         $app_settings = DB::table('appsettings')->where('id', 1)->first();
         if ($shop == 'yoganastix.com') {
@@ -70,7 +70,7 @@ class FrontendController extends Controller {
         $app_config = DB::table('appconfig')->where('store_id', $select_store[0]->id)->first();
 
         $sh = App::make('ShopifyAPI', ['API_KEY' => $app_settings->api_key, 'API_SECRET' => $app_settings->shared_secret, 'SHOP_DOMAIN' => $shop, 'ACCESS_TOKEN' => $select_store[0]->access_token]);
-        $product_id = $_POST['product_id'];
+        $product_id = $request['product_id'];
         $url = 'https://' . $shop . '/admin/api/' . $this->apiVersion . '/products/' . $product_id . '.json';
         $row = $sh->callAdvance(['URL' => $url, 'METHOD' => 'GET'], FALSE);
         echo '<section class="items">';
@@ -346,6 +346,7 @@ class FrontendController extends Controller {
         if ($shop == 'yoganastix.com') {
             $shop = 'yoganastix.myshopify.com';
         }
+		
 
         if ($shop == 'hopsandnuts.com') {
             $shop = 'hops-and-nuts-craft-beer-snacks.myshopify.com';
@@ -353,6 +354,11 @@ class FrontendController extends Controller {
         if ($shop == 'baketreats.com') {
             $shop = 'baketreats-inc.myshopify.com';
         }
+		
+		if ($shop == 'servicepartsonline.com.au') {
+            $shop = 'servicepartsonline.myshopify.com';
+        }
+		
         $select_store = DB::table('usersettings')->where('store_name', $shop)->get();
 
         $app_config = DB::table('appconfig')->where('store_id', $select_store[0]->id)->first();
@@ -456,7 +462,8 @@ class FrontendController extends Controller {
                     } else {
                         $url = 'https://' . $shop . '/admin/api/' . $this->apiVersion . '/products.json?limit=' . $limit . '&page_info=' . $params['page_info'];
                     }
-                    $products = $sh->callAdvance(['URL' => $url, 'METHOD' => 'GET'], FALSE);
+					
+                    $products = $sh->callAdvance(['URL' => $url, 'METHOD' => 'GET'], FALSE); 
                     $i++;
                     foreach ($products->products as $row) {
                         //for image
@@ -527,7 +534,163 @@ class FrontendController extends Controller {
             return json_encode($get_products);
         }
     }
+    public function prepareLinks($orders){
+        $return_arr = array(
+            'next_token' => '',
+            'prev_token' => ''
+        );
+        if(isset($orders->headers['link'])){
+            $next = $orders->headers['link'];
+            $page_params = explode(',',$next);
 
+            if(isset($page_params[1])){
+                $next_url = explode(',',$page_params[1]);
+                $previous_url = explode(',',$page_params[0]);
+            }else{
+                $check = explode('; ', $page_params[0]);
+                $check = str_replace('"', '', $check[1]);
+                if(strpos($check, 'next') !== false){
+                    $next_url = explode(',',$page_params[0]);
+                    $previous_url = '';                         
+                }else{
+                    $previous_url = explode(',',$page_params[0]);
+                    $next_url = '';                         
+                }
+            }
+            if($next_url != ''){
+                $str = substr($next_url[0], 1, -1);
+                $url_components = parse_url(substr($str, 0, strpos($str, ">")));
+                parse_str($url_components['query'], $next_params);
+                $next_param = $next_params['page_info'];
+            }else{
+                $next_param = '';
+            }
+            if($previous_url != ''){
+                $str = substr($previous_url[0], 1, -1);
+                $url_components = parse_url(substr($str, 0, strpos($str, ">")));
+                parse_str($url_components['query'], $previous_params);
+                $previous_param = $previous_params['page_info'];
+            }else{
+                $previous_param = '';
+            }  
+            $return_arr = array(
+                'next_token' => $next_param,
+                'prev_token' => $previous_param
+            );   
+        }
+        return $return_arr;
+    }
+    public function get_all_product1(Request $request){
+        $shop = session('shop');
+        $limit = 5;
+        $search = $request['search']['value'];
+        $page_info = '';
+        if($request['page_info'] != ''){
+            $page_info = $request['page_info'];
+        }
+        
+        $app_settings = DB::table('appsettings')->where('id', 1)->first();
+        $shop = $this->getCustomShopName($shop);
+        $select_store = DB::table('usersettings')->where('store_name', $shop)->get();
+        $app_config = DB::table('appconfig')->where('store_id', $select_store[0]->id)->first();
+        $sort_order = DB::table('field_sorting_details')->where('shop_id', $select_store[0]->id)->first();
+        $sh = App::make('ShopifyAPI', [
+            'API_KEY' => $app_settings->api_key, 
+            'API_SECRET' => $app_settings->shared_secret, 
+            'SHOP_DOMAIN' => $shop, 
+            'ACCESS_TOKEN' => $select_store[0]->access_token
+        ]);
+        if(!empty($search)){
+            $products = $sh->callAdvance(['URL' => '/admin/api/' . $this->apiVersion . '/products.json?limit=' . $limit . '&page_info=', 'METHOD' => 'GET']);
+        }else{
+            $products = $sh->callAdvance(['URL' => '/admin/api/' . $this->apiVersion . '/products.json?limit=' . $limit . '&page_info='.$page_info, 'METHOD' => 'GET']);
+        }
+
+        $key = 0; 
+        $params = $this->prepareLinks($products);
+        foreach ($products->products as $row) {
+
+            //image column
+            if (count($row->images) != 0) {
+                $image_url = '<img src="' . $row->images[0]->src . '" class="product_image">';
+            } else {
+                $image_url = '<img src="' . url('/images/no-image-available.png') . '" class="product_image">';
+            }
+
+            //for the button
+            if ($row->variants[0]->inventory_quantity == 0) {
+                $action_field = '<button type="button" class="sold_out all_btn" disabled="disabled" style="color:' . ($app_config->sold_out_text_color == '' ? '#ffffff' : $app_config->sold_out_text_color) . ';background-color:' . ($app_config->sold_out_background_color == '' ? '#403b37' : $app_config->sold_out_background_color) . '">' . ($app_config->sold_out_text == '' ? 'Sold Out' : $app_config->sold_out_text) . '</button>';
+            } else {
+                if (count($row->variants) == 1) {
+                    $action_field = '<button type="button" class="button text-uc my-btn add_to_cart_btn all_btn" onclick="return addToCart(' . $row->variants[0]->id . ')" style="color:' . $app_config->add_to_cart_text_color . ';background-color:' . $app_config->add_to_cart_background_color . '">' . $app_config->add_to_cart_text . '</button>';
+                } else {
+                    $action_field = '<input type="button" value="' . $app_config->show_options_text . '" p_id=' . $row->id . ' class="all_btn fancybox show_option_' . $key . '" id="show_options" data-toggle="collapse" data-target="#demo_' . $key . '" style="color:' . $app_config->show_options_text_color . ';background-color:' . $app_config->show_options_background_color . '">';
+                }
+            }
+            
+            //for quantity
+            if (count($row->variants) == 1 && $row->variants[0]->inventory_quantity != 0) {
+                $quantity_field = '<input type="text" class="quntity-input" id="qty_outer_' . $row->variants[0]->id . '" value="1" min="1" />';
+            } else {
+                $quantity_field = "";
+            }
+
+            //for sku
+            if ($app_config->display_sku == 1) {
+                $product_sku = $row->variants[0]->sku;
+            } else {
+                $product_sku = "";
+            }
+            $sort_order_array = json_decode($sort_order->sort_order);
+
+            if ($app_config->display_sku == 1) {
+                $new_row = $this->return_sequence_with_sku(
+                                $sort_order_array, 
+                                $image_url, 
+                                $row->title, 
+                                $row->variants['0']->price, 
+                                $quantity_field, 
+                                $product_sku, 
+                                $action_field
+                            );
+            } else {
+                $new_row = $this->return_sequence_without_sku(
+                                $sort_order_array, 
+                                $image_url, 
+                                $row->title, 
+                                $row->variants['0']->price, 
+                                $quantity_field, 
+                                $action_field
+                            );
+            }
+            $key ++;
+            $get_products['data'][] = $new_row;
+            $get_products['next'] = $params['next_token'];
+            $get_products['previous'] = $params['prev_token']; 
+            
+        }
+        // $get_products['data'] = $return_arr;
+        return json_encode($get_products);
+
+    }
+    public function getCustomShopName($shop){
+        if ($shop == 'bewickedusa.com') {
+            $shop = 'bewicked.myshopify.com';
+        }
+        if ($shop == 'yoganastix.com') {
+            $shop = 'yoganastix.myshopify.com';
+        }
+        if ($shop == 'hopsandnuts.com') {
+            $shop = 'hops-and-nuts-craft-beer-snacks.myshopify.com';
+        }
+        if ($shop == 'baketreats.com') {
+            $shop = 'baketreats-inc.myshopify.com';
+        }
+        if ($shop == 'servicepartsonline.com.au') {
+            $shop = 'servicepartsonline.myshopify.com';
+        }
+        return $shop;
+    }
     public function return_sequence_with_sku($sort_order_array, $image_url, $title, $price, $quantity, $sku, $action_field) {
 
         foreach ($sort_order_array as $sort_key => $field) {
@@ -688,10 +851,22 @@ class FrontendController extends Controller {
         if ($shop == 'baketreats.com') {
             $shop = 'baketreats-inc.myshopify.com';
         }
+		
+		 if ($shop == 'servicepartsonline.com.au') {
+            $shop = 'servicepartsonline.myshopify.com';
+        }
 
         $select_store = DB::table('usersettings')->where('store_name', $shop)->get();
-        $sh = App::make('ShopifyAPI', ['API_KEY' => $app_settings->api_key, 'API_SECRET' => $app_settings->shared_secret, 'SHOP_DOMAIN' => $shop, 'ACCESS_TOKEN' => $select_store[0]->access_token]);
+
+        $sh = App::make('ShopifyAPI', [
+            'API_KEY' => $app_settings->api_key, 
+            'API_SECRET' => $app_settings->shared_secret, 
+            'SHOP_DOMAIN' => $shop, 
+            'ACCESS_TOKEN' => $select_store[0]->access_token
+        ]);
+
         $url = 'https://' . $shop . '/admin/api/' . $this->apiVersion . '/products.json';
+
         $count = $sh->callAdvance(['URL' => '/admin/api/' . $this->apiVersion . '/products/count.json', 'METHOD' => 'GET']);
 
         $app_config = DB::table('appconfig')->where('store_id', $select_store[0]->id)->first();

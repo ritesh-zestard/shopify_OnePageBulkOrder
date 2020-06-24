@@ -52,7 +52,7 @@ Route::any('product_list', 'hpisumController@index')->name('product_list');
 // Route::any('update_products', 'hpisumController@update_products')->name('update_products');
 
 Route::post('show_variants', 'FrontendController@show_variants')->middleware('cors')->name('show_variants');
-Route::get('get_all_product', 'FrontendController@get_all_product')->middleware('cors')->name('get_all_product');
+Route::get('get_all_product', 'FrontendController@get_all_product1')->middleware('cors')->name('get_all_product');
 
 Route::get('quick_order_dashboard_save', 'SettingsController@save')->name('quick_order_dashboard_save');
 Route::post('quick_order_dashboard_store', 'SettingsController@store')->name('quick_order_dashboard_store');

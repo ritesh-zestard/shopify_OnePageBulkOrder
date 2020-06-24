@@ -12,7 +12,7 @@ $json = '' . file_get_contents('php://input') . '';
 
 $result = json_decode($json);
 
-$connection = new mysqli("localhost", "zestards_apps", "9]X$8}_q2~dl", "zestards_shopifylive_one_page_bulkorder");
+$connection = new mysqli("localhost", "anujdala_shopify", "5bSdT0rmiU*a", "anujdala_bulkorder_demo_new");
 
 $delete_shop = "DELETE FROM usersettings WHERE store_name= '" . $result->myshopify_domain . "'";
 
@@ -20,7 +20,7 @@ $connection->query($delete_shop);
 
 //for the follow up mail
 $owner_name = $result->shop_owner;
-$app_name = "One Page Bulk Order";
+$app_name = "One Page Bulk Order Demo";
 $uninstallation_follow_up_msg ='<html>
 
 <head>
