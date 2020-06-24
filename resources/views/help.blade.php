@@ -13,7 +13,7 @@
  ShopifyApp.ready(function() {
 	ShopifyApp.Bar.initialize({
 	icon: "{{ asset('image/bulk-order-icon3.jpg') }}",
-	title: 'Help',
+	title: 'Bulk Order Help',
 	buttons: {
         secondary: [
             {
@@ -25,6 +25,16 @@
                 label: 'Quick Order Settings',
                 href: '{{ url('quick_order_dashboard_save') }}?shop=<?php echo $shop; ?>',
                 loading: false
+            },
+            {
+                label: 'Quick order Help',
+                href: '{{ url('quick_help') }}?shop=<?php echo $shop; ?>',
+                loading: true
+            },
+            {
+                label: 'Dashboard',
+                href: '{{ url('new_dashboard') }}',
+                loading: true
             }
         ]
     }
@@ -64,7 +74,7 @@
                 <div class="col-md-12 col-sm-12 col-xs-12">
                     <ul class="dd-help-ul">
                         <li><span>Developer: </span><a target="_blank" href="https://www.zestard.com">Zestard Technologies Pvt Ltd</a></li>
-                        <li><span>Email: </span><a href="mailto:support@zestard.com">support@zestard.com</a></li>
+                        <li><span>Email: </span><a href="mailto:support@zestard.com" target="_top">support@zestard.com</a></li>
                         <li><span>Website: </span><a target="_blank" href="https://www.zestard.com">https://www.zestard.com</a></li>
                     </ul>
                 </div>
@@ -134,7 +144,7 @@
                             <div class="panel-heading">
                                 <h4 class="panel-title">
                                     <p data-toggle="collapse" data-parent="#accordion" href="#collapse4"> 
-                                        <strong><span class="">How to change language or desgin in frontend?</span>
+                                        <strong><span class="">How to change language or design in frontend?</span>
                                             <span class="fa fa-chevron-down pull-right"></span></strong>  
                                     </p>
                                 </h4>

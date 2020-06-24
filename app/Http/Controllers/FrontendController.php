@@ -71,7 +71,7 @@ class FrontendController extends Controller {
 
         $sh = App::make('ShopifyAPI', ['API_KEY' => $app_settings->api_key, 'API_SECRET' => $app_settings->shared_secret, 'SHOP_DOMAIN' => $shop, 'ACCESS_TOKEN' => $select_store[0]->access_token]);
         $product_id = $request['product_id'];
-        $url = 'https://' . $shop . '/admin/api/' . $this->apiVersion . '/' . $product_id . '.json';
+        $url = 'https://' . $shop . '/admin/api/' . $this->apiVersion . '/products/' . $product_id . '.json';
         $row = $sh->callAdvance(['URL' => $url, 'METHOD' => 'GET'], FALSE);
         echo '<section class="items">';
         echo '<table id="sub_product" class="table_product">';
@@ -206,6 +206,127 @@ class FrontendController extends Controller {
         }
 
         return json_encode($total_products);
+    }
+
+    public function get_all_product_test(request $request) {
+        $sh = App::make('ShopifyAPI');
+        $app_settings = DB::table('appsettings')->where('id', 1)->first();
+        $shop = session('shop');
+        $select_store = DB::table('usersettings')->where('store_name', $shop)->get();
+        $sh = App::make('ShopifyAPI', ['API_KEY' => $app_settings->api_key, 'API_SECRET' => $app_settings->shared_secret, 'SHOP_DOMAIN' => $shop, 'ACCESS_TOKEN' => $select_store[0]->access_token]);
+        $count = $sh->callAdvance(['URL' => '/admin/api/' . $this->apiVersion . '/products/count.json', 'METHOD' => 'GET']);
+        $products_count = (array) $count;
+        $product_count = $products_count['count'];
+        $limit = $request['length'];
+        $limit = 10;
+        $draw = $request['draw'];
+        $start = $request['start'];
+        $current_page = ceil($start / $limit) + 1;
+        $search = $request['search']['value'];
+        $val = $start + 1;
+        $length = $request['length'];
+        $page_info = '';
+        if(isset($request->page_info)){
+            $page_info = $request['page_info'];    
+        }
+        
+
+        $total_products = array('draw' => $draw, 'recordsTotal' => $product_count, 'recordsFiltered' => $product_count);
+
+        if ($search && 0 ) {
+            $default_image = url('/images/no-image-available.png');
+            $pages = ceil($product_count / 250);
+            $limit = 250;
+            for ($i = 0; $i < $pages; $i++) {
+                $current_page = $i + 1;
+                // $product_list = $sh->call(['URL' => '/admin/products.json?limit=' . $limit . '&page=' . $current_page, 'METHOD' => 'GET']);
+                $product_list = $sh->callAdvance(['URL' => '/admin/api/' . $this->apiVersion . '/products.json?limit=' . $limit . '&page_info=', 'METHOD' => 'GET']);
+
+                foreach ($product_list->products as $product) {
+
+                    if (stristr($product->title, $search)) {
+                        if (isset($product->images[0])) {
+                            $image = $product->images[0]->src;
+                        } else {
+                            $image = $default_image;
+                        }
+
+                        $link = "<a href = 'https://" . $shop . "/admin/api/. $this->apiVersion . '/products/" . $product->id . "' target = '_blank'>" . $product->title . "</a>";
+
+                        $edit_link = "<a href =" . url('edit/' . $product->id) . "><button class='buttonstyle'><span class='glyphicon glyphicon-edit'></span></button></a>";
+                        $total_products['data'][] = array($image, $link, $product->product_type, $product->vendor, $edit_link);
+                    }
+                    $val++;
+                }
+            }
+        } else {
+            $i = 0;
+            // $page_info = '';
+            // $limit = 250;
+            // $page = (int) $product_count/$limit;
+            // $page_number = 1;
+        
+                /*if ($i == 0) {
+                    $product_list = $sh->callAdvance(['URL' => '/admin/api/' . $this->apiVersion . '/products.json?limit=' . $limit . '&page_info=', 'METHOD' => 'GET']);
+                } else {
+                    $product_list = $sh->callAdvance(['URL' => '/admin/api/' . $this->apiVersion . '/products.json?limit=' . $limit . '&page_info=' . $params['page_info'], 'METHOD' => 'GET']);
+                }
+                $i++;*/
+                if($search){
+                    $product_list = $sh->callAdvance(['URL' => '/admin/api/' . $this->apiVersion . '/products.json?limit=' . $limit . '&title='.urlencode($search), 'METHOD' => 'GET']);    
+                }else{
+
+                    $product_list = $sh->callAdvance(['URL' => '/admin/api/' . $this->apiVersion . '/products.json?limit=' . $limit . '&page_info=' . $page_info, 'METHOD' => 'GET']);
+                }
+                
+                $pagination_links = $this->prepareLinks($product_list);
+                
+                //print_r($product_list);
+                $default_image = url('/image/default.png');
+                foreach ($product_list->products as $product) {
+                    if (isset($product->images[0])) {
+                        $image = $product->images[0]->src;
+                    } else {
+                        $image = $default_image;
+                    }
+                    $link = "<a href = 'https://" . $shop . "/admin/api/" . $this->apiVersion . "/products/" . $product->id . "' target = '_blank'>" . $product->title . "</a>";
+                    $edit_link = "<a href =" . url('edit/' . $product->id) . "><button class='buttonstyle'><span class='glyphicon glyphicon-edit'></span></button></a>";
+                    $total_products['data'][] = array($image, $link, $product->product_type, $product->vendor, $edit_link);
+                    $val++;
+                }
+                /*if (isset($product_list->headers['link'])) {
+                    $next = $product_list->headers['link'];
+                    $page_params = explode(',', $next);
+                    if (isset($page_params[1])) {
+                        $next_url = explode(',', $page_params[1]);
+                    } else {
+                        $next_url = explode(',', $page_params[0]);
+                    }
+                    $str = substr($next_url[0], 1, -1);
+                    $url_components = parse_url(substr($str, 0, strpos($str, ">")));
+                    parse_str($url_components['query'], $params);
+                }*/
+                // $page_info = $pagination_links['next_token'];
+           
+        }
+        $return_arr = array();
+        // for ($i = $start; $i < $start + $length; $i++) {
+        //     if (isset($total_products['data'][$i])) {
+        //         $return_arr[] = $total_products['data'][$i];
+        //     } else {
+        //         break;
+        //     }
+        // }
+        if(!empty($total_products['data']) && count($total_products['data']) > 0){
+
+            $return_arr = $total_products['data']; 
+        }
+        $total_products['data'] = $return_arr;
+        $total_products['next'] = $pagination_links['next_token'];
+        $total_products['previous'] = $pagination_links['prev_token'];
+
+        return json_encode($total_products);
+
     }
 
     public function get_all_product(request $request) {

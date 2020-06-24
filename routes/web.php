@@ -13,6 +13,8 @@
 
 Route::get('dashboard', 'callbackController@dashboard')->name('dashboard');
 
+Route::get('new_dashboard', 'callbackController@NewDashboard')->name('new_dashboard');
+
 Route::get('callback', 'callbackController@index')->name('callback');
 
 Route::get('redirect', 'callbackController@redirect')->name('redirect');
@@ -66,3 +68,5 @@ Route::any('frontend_quick_order', 'FrontendController@frontend2')->middleware('
 Route::any('activate_quick_order', 'SettingsController@activate_quick_order')->name('activate_quick_order');
 
 Route::get('quick_help', 'SettingsController@help')->name('quick_help');
+
+Route::get('get_all_product_test', 'FrontendController@get_all_product_test')->middleware('cors')->name('get_all_product_test');

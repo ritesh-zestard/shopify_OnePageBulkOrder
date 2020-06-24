@@ -210,7 +210,7 @@
 </div>
 
 <script src="https://code.jquery.com/jquery.js"></script>
-<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+<!-- <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script> -->
 <script type="text/javascript" src="{{ asset('js/flyto.js') }}"></script>
 
 <script type="text/javascript">
@@ -232,7 +232,7 @@ $ztpl_one_page_quick_order(function () {
                 //alert("test");
                 $ztpl_one_page_quick_order("#dialog").dialog(
                 {
-                    height: 700,
+                    height: 600,
                     width: 760
                 });
                 startloader(0);
@@ -243,7 +243,49 @@ $ztpl_one_page_quick_order(function () {
 });
 function addToCart(id)
 {
+    var available_stock_qty = 0;
     var qt = $ztpl_one_page_quick_order("#qty_outer_" + id).val();
+    var items = [];
+    var variants = [];
+    var flag = 0;
+    $ztpl_one_page_quick_order.ajax({
+        url: '{{url("get_variant_quantity_by_id")}}',
+        type: "POST",
+        async: false, // Please keep it false
+        data: {variantId: id, shop_name:shop_name},
+        success: function (d)
+        {
+            available_stock_qty = d;
+             $ztpl_one_page_quick_order.ajax({
+                type: 'GET',
+                url: '/cart.js',
+                async: false, // Please keep it false
+                success: function (da)
+                {
+                    var available = JSON. parse(da);
+                    var items = available.items;
+                    items.forEach(function(entry) {
+                        if (id == entry.variant_id) {
+                            if (entry.quantity >= parseInt(available_stock_qty)) {
+                               flag = 1;
+                            }
+                        }
+                    });
+                   
+                }
+            });
+           
+        }
+    });
+
+    //  if (parseInt(qt) > parseInt(available_stock_qty)) {
+    //     alert("can't add more than stock..Available Stock is '"+  available_stock_qty +"'");
+    //     return false;
+    // }
+    if (flag == 1 || (parseInt(qt) > parseInt(available_stock_qty))) {
+        alert("Quantity Exceeded");
+        return false;
+    }
     $ztpl_one_page_quick_order.ajax({
         type: 'POST',
         url: '/cart/add.js',
@@ -256,6 +298,7 @@ function addToCart(id)
                 dataType: 'json',
                 success: function (cart) {
                     alert('There are now ' + cart.item_count + ' items in the cart.');
+                    location.reload();
                 }
             });
         }
@@ -337,7 +380,7 @@ $ztpl_one_page_quick_order(document).ready(function () {
                 {
                     $ztpl_one_page_quick_order("#dialog").html(data);
                     $ztpl_one_page_quick_order('.ui-dialog-title').html(product_name);
-                    jQuery("#dialog").dialog(
+                    $ztpl_one_page_quick_order("#dialog").dialog(
                     {
                         height: 700,
                         width: 760

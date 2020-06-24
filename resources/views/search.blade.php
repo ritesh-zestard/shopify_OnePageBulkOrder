@@ -12,7 +12,6 @@
 //  }
 //
 //    $ = jQuery;
-
 	var shop_name = Shopify.shop;
 	var out_of_stock;
     function startloader(process) {
@@ -70,7 +69,7 @@
             }
         });
         //for reset all data
-
+		$(".ztpl-removerow").css("display","none");
         $("#ztpl-reset_all").on('click', function () {
 
             $(".ztpl-mainrow input").val('');
@@ -196,6 +195,7 @@
 										//$.map(data.results, function (results){
 										var variant = results.product.variants[0];
 										cost_price = results.price;
+                                      
 										if(shop_name == "colloapparel.myshopify.com")
 										{
 											cost_price = cost_price / 2;
@@ -289,6 +289,7 @@
                         }
                     });
                     var shopify_inventory = ui.item.inventorystatus;
+					$(this).parent().next().next().next().next().children("a").css("display","block");
                     if (shopify_inventory == "shopify")
                     {
                         $(this).parent().parent().find('.ztpl-varient').attr("inventory_status", shopify_inventory);
@@ -391,15 +392,13 @@
 						else
 						{
 							$(this).parent().next().next().next().find('.ztpl-total').val(formated_cost.replace("$",""));
-						}
+		  				}
                         $(this).parent().next().next().next().find('.ztpl-total').attr("original_cost", ui.item.cost);
 
                     }
 
 					//for the kayup of the quantity
-
                     $('.ztpl-product_quantity').on('keyup', function () {
-
                         out_of_stock = '<?php echo $shop_find['allow_out_of_stock_products_to_order'] ?>';
                         var qty = $(this).val();
 
@@ -529,7 +528,14 @@
                             }
 
                         }
+
                         calculate_total();
+
+                         if (parseInt(qty) > parseInt(stock)) {
+                            alert('You can not add more than stock');
+                            $(this).val(parseInt(stock));
+                            return false;
+                        }
                     });
                     calculate_total();
                 }
@@ -714,6 +720,8 @@
                         <div class="ztpl-col-lg-2 ztpl-col-md-2 ztpl-col-sm-2 ztpl-col-xs-4 ztpl-cost_box"><input type="text" class="ztpl-product_cost ztpl-money" disabled="disabled" placeholder="<?php echo ($shop_find['cost_label'] != '') ? $shop_find['cost_label'] : 'Cost' ?>" /></div>
 
                         <div class="ztpl-col-lg-2 ztpl-col-md-2 ztpl-col-sm-2 ztpl-col-xs-4 ztpl-total_box"><input type="text" class="ztpl-total money" disabled="disabled" placeholder="<?php echo ($shop_find['total_label'] != '') ? $shop_find['total_label'] : 'Total' ?>" /></div>
+                        <div>
+                        <a class="ztpl-bo-col-1 ztpl-removerow ztpl-bo-remove-section"><span aria-hidden="true">&times;</span></a></div>
 
                 </div>
 
