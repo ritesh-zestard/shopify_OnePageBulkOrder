@@ -1,4 +1,4 @@
-<link rel="stylesheet" href="https://zestardshop.com/shopifyapp/bulkorder/public/js/jquery.fancybox.css">
+<link rel="stylesheet" href="https://shopifydev.anujdalal.com/bulkorder/public/js/jquery.fancybox.css">
 <link rel="stylesheet" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css">
 <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.2.1/css/responsive.dataTables.min.css">
 <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
@@ -209,9 +209,9 @@
     </section>
 </div>
 
-<!-- <script src="https://code.jquery.com/jquery.js"></script> -->
+<script src="https://code.jquery.com/jquery.js"></script>
 <!-- <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script> -->
-<!-- <script type="text/javascript" src="{{ asset('js/flyto.js') }}"></script> -->
+<script type="text/javascript" src="{{ asset('js/flyto.js') }}"></script>
 
 <script type="text/javascript">
     var product_table = '';
@@ -246,6 +246,7 @@ function addToCart(id)
     var available_stock_qty = 0;
     var qt = $ztpl_one_page_quick_order("#qty_outer_" + id).val();
     if (parseInt(qt) < 1) {
+        debugger
         alert("Add atleast 1 Product");
         return false;
     }
@@ -369,7 +370,13 @@ $ztpl_one_page_quick_order(document).ready(function () {
     //     "ajax": "{{url('get_all_product')}}"
     // });
     function bind_ajax_table(){
-
+        $ztpl_one_page_quick_order('.items').flyto({
+            item: 'tr',
+            target: '.icon-cart',
+            button: '.my-btn',
+            shake: true
+        });
+        
         $ztpl_one_page_quick_order(".fancybox").on("click", function () {
             startloader(1);
             var product_id = $ztpl_one_page_quick_order(this).attr('p_id');
@@ -393,7 +400,13 @@ $ztpl_one_page_quick_order(document).ready(function () {
 
         });
     }
-    
+    debugger
+    $ztpl_one_page_quick_order('.items').flyto({
+        item: 'tr',
+        target: '.icon-cart',
+        button: '.my-btn',
+        shake: true
+    });
 });
 
 

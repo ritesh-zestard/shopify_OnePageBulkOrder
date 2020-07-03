@@ -1,7 +1,10 @@
 @extends('header')
 @section('content')
 <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-<script src="https://zestardshop.com/shopifyapp/one_page_quick_order/public/js/jquery-ui.js"></script>
+<link rel="stylesheet" type="text/css" href="{{asset('css/new_design/spectrum.css')}}">
+<link rel="stylesheet" type="text/css" href="{{asset('css/new_design/uptown.css')}}">
+<link rel="stylesheet" type="text/css" href="{{asset('css/new_design/custom.css')}}">
+<script src="https://shopifydev.anujdalal.com/one_page_quick_order/public/js/jquery-ui.js"></script>
 <style>
     .copystyle_wrapper
     {
@@ -70,11 +73,12 @@ if (!session('shop')) {
 <script type="text/javascript">
     ShopifyApp.ready(function (e) {
         ShopifyApp.Bar.initialize({
+            title:'Quick Order Settings',
             buttons: {
-                primary: {
-                    label: 'Quick Order Settings Demo',
-                    callback: function(){ introJs().start(); }
-                },
+                // primary: {
+                //     label: 'Quick Order Settings Demo',
+                //     callback: function(){ introJs().start(); }
+                // },
                 secondary: [
                     {
                         label: 'Quick order Help',
@@ -85,11 +89,17 @@ if (!session('shop')) {
                         label: 'Bulk order Settings',
                         href: '{{ url('dashboard') }}?shop=<?php echo $shop; ?>',
                         loading: true
+                    },
+                    {
+                        label: 'Bulk order Help',
+                        href: '{{ url('help') }}?shop=<?php echo $shop; ?>',
+                        loading: false
+                    },
+                    {
+                        label: 'Dashboard',
+                        href: '{{ url('new_dashboard') }}',
+                        loading: true
                     }
-                    // {
-                    //     label: 'General Settings Demo',
-                    //     callback: function(){ introJs().start(); } 
-                    // }
                 ]
             }
         });
@@ -166,278 +176,221 @@ if (Session::has('shop')) {
 
 <form action="{{ url('quick_order_dashboard_store') }}?shop=<?php echo $shop; ?>" method="POST" data-shopify-app-submit="form_submit" data-toggle="validator" id="commentForm">
     {{ csrf_field() }}
-    <div class="formcolor">                    
-        <br>
-        <h2 class="sub-heading">General Settings</h2>
-        <div class="row formcolor_row">
-            <div class="col-sm-4 padding_left" >
-                <strong>App Active?</strong>
-                <span class="onoff"><input type="checkbox" name ="app_status" value="1" id="app_active" @if(count($app_setting) > 0) @if($app_setting->app_status == 1)  {{ "checked" }} @endif @endif><label for="app_active"></label></span>
-            </div>    
-        </div>
+        <main class="full-width wrpr general-setting">
+                <header>
+                    <div class="container">
+                        <div class="adjust-margin toc-block">
+                            <h1>General Settings</h1>
+                            <div class="row formcolor_row on-off">
+                                <strong>App Active?</strong>
+                                <ul class="tg-list">
+                                    <li class="tg-list-item">
+                                        <input class="tgl tgl-ios" id="cb2" type="checkbox" name ="app_status" value="1" id="app_active" @if(count($app_setting) > 0) @if($app_setting->app_status == 1)  {{ "checked" }} @endif @endif />
+                                        <label class="tgl-btn" for="cb2"></label>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </header>
+                <section>
+                    <article>
+                        <div class="columns has-sections card three-tabs">
+                            <ul class="tabs">
+                                <li class="tab-link active" data-tab="tab-1"><a href="#">Label Settings</a></li>
+                                <li class="tab-link" data-tab="tab-2"><a href="#">Color Settings</a></li>
+                                <li class="tab-link" data-tab="tab-3"><a href="#">Language Settings</a></li>
+                            </ul>
+                            <div class="card-section">
+                                <div id="tab-1" class="label-setting tab-content active">
+                                    <div class="columns twelve">
+                                        <div class="form-group">
+                                            <label>Product Name</label>
+                                            <input type="text" class="form-control" name = "product_name_label" @if(count($app_setting) > 0) value="{{$app_setting->product_name_label}}" @else value="" @endif required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Product Image</label>
+                                             <input type="text" class="form-control" name = "product_image_label" @if(count($app_setting) > 0) value="{{$app_setting->product_image_label}}" @else value="" @endif required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Product Price</label>
+                                            <input type="text" class="form-control" name = "product_price_label" @if(count($app_setting) > 0) value="{{$app_setting->product_price_label }}" @else value="" @endif required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Product Quantity</label>
+                                             <input type="text" class="form-control" name = "product_quantity_label" @if(count($app_setting) > 0) value="{{$app_setting->product_quantity_label }}" @else value="" @endif required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Product SKU</label>
+                                           <input type="text" class="form-control" name = "product_sku_label" @if(count($app_setting) > 0) value="{{$app_setting->product_sku_label }}" @else value="" @endif required>
+                                        </div>
+                                        <div class="form-group">
+                                            <input type="hidden" name="display_sku" value="0">
+                                            <label><input type="checkbox" style="visibility:visible;" name = "display_sku" value=1 {{ ($app_setting->display_sku == 1)?'checked':'' }}>Show SKU To Customer</label>
+                                        </div>
+                                        <div class="form-group" data-step="4" data-intro="You will be able to maintain and manage the sorting order of the fields to display in the front-end of One Page Quick Order page.">
+                                             <?php 
+                                                  $order_id = 0;
+                                                    $fields = json_decode($sort_order->sort_order);
+                                                ?>
+                                            <label>Select display order for all fields</label>
+                                            <ul class="connected-sortable droppable-area2">
+                                                @foreach($fields as $field)
+                                                <li id="{{ $field }}" class="draggable-item table_fields"><span>&#8942;&#8942;&nbsp;&nbsp;</span>{{ $field }}</li>
+                                                <?php $order_id ++; ?>
+                                                @endforeach
+                                            </ul>
+                                        </div>
+                                        <section>
+                                            <div class="column twelve text-right">
+                                                <input type="submit" name="save" class="save_bulkorder" value="Save">
+                                            </div>
+                                        </section>
+                                    </div>
+                                </div>
+                                <div id="tab-2" class="color-setting tab-content">
+                                    <div class="columns twelve">
+                                        <div class="form-group">
+                                            <!--Header Background Color-->
+                                            <div>
+                                                <p class="colorlabel">
+                                                    <label class="header-color" for="header_background_color">Header Background Color</label>
+                                                    <input type="text" name="header_background_color" class="header_background_color" style="display: none;" @if(count($app_setting) > 0) value="{{$app_setting->header_background_color }}" @else value="" @endif>
+                                                </p>
+                                            </div>
+                                            <!--Show Options Button Background Color -->
+                                            <div>
+                                                <p class="colorlabel">
+                                                    <label class="header-color" for="show_options_background_color">Show Options Button Background Color</label>
+                                                    <input type="text" name="show_options_background_color" class="show_options_background_color" style="display: none;" @if(count($app_setting) > 0) value="{{$app_setting->show_options_background_color }}" @else value="" @endif>
+                                                </p>
+                                            </div>
+                                            <!-- Add to Cart Button Background Color -->
+                                            <div>
+                                                <p class="colorlabel">
+                                                    <label class="header-color" for="add_to_cart_background_color">Add to Cart Button Background Color</label>
+                                                     <input type="text" name="add_to_cart_background_color" class="add_to_cart_background_color" style="display: none;" @if(count($app_setting) > 0) value="{{$app_setting->add_to_cart_background_color }}" @else value="" @endif>
+                                                </p>
+                                            </div>
+                                            <!--Show Options Button Background Color -->
+                                            <div>
+                                                <p class="colorlabel">
+                                                    <label class="header-color" for="show_options_text_color">Show Options Button Text Color</label>
+                                                    <input type="text" name="show_options_text_color" class="show_options_text_color" style="display: none;" @if(count($app_setting) > 0) value="{{$app_setting->show_options_text_color }}" @else value="" @endif>
+                                                </p>
+                                            </div>
 
-        <div class="row formcolor_row">
-            <div class="col-md-4 padding_left">
-                <div class="label_setting">
-                    <div data-step="1" data-intro="This section will allow to enter Header Label information which you would like to display in the One Page Quick Order page.">
-                        <h3 class="sub-heading">Label Settings</h3>
-                        <div class="form-group">
-                            {{-- <label>Product Name *</label>
-                            <div class="help-tip">
-                                <p>Enter text to show as a <b>Product Name label</b>.</p>
-                            </div> --}}
-                            <input type="text" class="form-control" name = "product_name_label" @if(count($app_setting) > 0) value="{{$app_setting->product_name_label}}" @else value="" @endif required>
-                            
+                                            <!-- Add to Cart Button Background Color -->
+                                            <div>
+                                                <p class="colorlabel">
+                                                    <label class="header-color" for="add_to_cart_text_color">Add to Cart Button Text Color</label>
+                                                    <input type="text" name="add_to_cart_text_color" class="add_to_cart_text_color" style="display: none;" @if(count($app_setting) > 0) value="{{$app_setting->add_to_cart_text_color }}" @else value="" @endif>
+                                                </p>
+                                            </div>
+                                            <!-- Sold Out Button Background Color -->
+                                            <div>
+                                                <p class="colorlabel">
+                                                    <label class="header-color" for="sold_out_background_color">Sold Out button Background Color</label>
+                                                     <input type="text" name="sold_out_background_color" class="sold_out_background_color" style="display: none;" @if(count($app_setting) > 0) value="{{$app_setting->sold_out_background_color }}" @else value="" @endif>
+                                                </p>
+                                            </div>
+
+                                            <!--Sold Out Button Text Color -->
+                                            <div>
+                                                <p class="colorlabel">
+                                                    <label class="header-color" for="sold_out_text_color">Sold Out button Text Color</label>
+                                                    <input type="text" name="sold_out_text_color" class="sold_out_text_color" style="display: none;" @if(count($app_setting) > 0) value="{{$app_setting->sold_out_text_color }}" @else value="" @endif>
+                                                </p>
+
+                                            </div>
+                                            <section>
+                                                <div class="column twelve text-right">
+                                                    <input type="submit" name="save" class="save_bulkorder" value="Save">
+                                                </div>
+                                            </section>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="tab-3" class="language-setting tab-content">
+                                    <div class="columns twelve">
+                                        <div class="label_setting">
+                                            <div class="form-group">
+                                                <label>Show Options Button Text *</label>
+
+                                                <input type="text" class="form-control" placeholder="Show Options" name ="show_options_text" @if(count($app_setting) > 0) value="{{$app_setting->show_options_text }}" @else value="" @endif required /> 
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Sold out Button Text *</label>
+
+                                                <input type="text" class="form-control" placeholder="Sold Out" name ="sold_out_text"  @if(count($app_setting) > 0) value="{{$app_setting->sold_out_text }}" @else value="" @endif required /> 
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Add to Cart Button Text *</label>
+
+                                                 <input type="text" class="form-control" placeholder="Add to Cart" name ="add_to_cart_text" @if(count($app_setting) > 0) value="{{$app_setting->add_to_cart_text }}" @else value="" @endif required /> 
+                                            </div>
+                                        </div>
+                                        <section>
+                                            <div class="column twelve text-right">
+                                                <input type="submit" name="save" class="save_bulkorder" value="Save">
+                                            </div>
+                                        </section>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <div class="form-group">
-                            {{-- <label>Product Image *</label>
-                            <div class="help-tip">
-                                <p>Enter text to show as a <b>Product Image label</b>.</p>
-                            </div> --}}
-                            <input type="text" class="form-control" name = "product_image_label" @if(count($app_setting) > 0) value="{{$app_setting->product_image_label}}" @else value="" @endif required>
+                    </article>
+                </section>
+                <section style="border-top: 0px;">
+                    <article>
+                        <div class="card-content">
+                            <div class="columns twelve settings">
+                                <h3 class="bulk-install">The Quick order App Has Been Installed!</h3>
+                            </div>
+                            <div class="card has-sections columns twelve">
+                                <div class="card-section">
+
+                                    <p>    
+                                        The Quick order page for your store is located at below mentioned link:    
+                                        <b><a href="<?php
+                                            if (Session::has('shop')) {    
+                                                echo "https://" . $store_name . "/pages/one-page-quick-order";
+                                            } else {    
+                                                echo"#";
+                                            }
+                                            ?>" target="_blank">    
+                                                <?php
+                                                if (Session::has('shop')) {    
+                                                    echo "https://" . session('shop') . "/pages/one-page-quick-order";
+                                                }
+                                                ?>        
+                                            </a></b>    
+                                    </p>    
+                                    <p>    
+                                        You can share this link with your customers or link to it from your store's navigation menu <b><a class="info_css" href="{{ asset('image/navigation.png') }}">See Example</a></b>    
+                                    </p>    
+
+                                    <p>    
+                                        To edit or delete the page, visit the    
+                                        <b><a href="<?php
+                                            if (Session::has('shop')) {    
+                                                echo "https://" . session('shop') . "/admin/pages";
+                                            }
+                                            ?>" target="_blank">    
+                                                Pages section    
+                                            </a></b>     
+                                        in your Shopify Admin.    
+                                    </p>        
+
+                                </div>
+                            </div>
                         </div>
-                        <div class="form-group">
-                            {{-- <label>Product Price *</label>
-                            <div class="help-tip">
-                                <p>Enter text to show as a <b>Product Price label</b>.</p>
-                            </div> --}}
-                            <input type="text" class="form-control" name = "product_price_label" @if(count($app_setting) > 0) value="{{$app_setting->product_price_label }}" @else value="" @endif required>
-                        </div>
-                        <div class="form-group">
-                            {{-- <label>Product Quantity *</label>
-                            <div class="help-tip">
-                                <p>Enter text to show as a <b>Product Quantity label</b>.</p>
-                            </div> --}}
-                            <input type="text" class="form-control" name = "product_quantity_label" @if(count($app_setting) > 0) value="{{$app_setting->product_quantity_label }}" @else value="" @endif required>
-                        </div>
-                        <div class="form-group">
-                            {{-- <label>Product SKU *</label>
-                            <div class="help-tip">
-                                <p>Enter text to show as a <b>Product SKU label</b>.</p>
-                            </div> --}}
-                            <input type="text" class="form-control" name = "product_sku_label" @if(count($app_setting) > 0) value="{{$app_setting->product_sku_label }}" @else value="" @endif required>
-                        </div>
-                        <div class="form-group">
-                            <input type="hidden" name="display_sku" value="0">
-                            <label>Show SKU To Customer &nbsp;&nbsp;<input type="checkbox" style="visibility:visible;" name = "display_sku" value=1 {{ ($app_setting->display_sku == 1)?'checked':'' }}></label>
-                            {{-- <div class="help-tip">
-                                <p>Keep this selected if you want to display <b>SKU field</b>.</p>
-                            </div> --}}
-                        </div>
-                    </div>
-                    <div class="form-group" data-step="4" data-intro="You will be able to maintain and manage the sorting order of the fields to display in the front-end of One Page Quick Order page.  ">
-                        <?php 
-                          $order_id = 0;
-                            $fields = json_decode($sort_order->sort_order);
-                        ?>
-                        <label>Select display order for all fields</label>
-                        <ul class="connected-sortable droppable-area2">
-                            @foreach($fields as $field)
-                            <li id="{{ $field }}" class="draggable-item table_fields"><span>&#8942;&#8942;&nbsp;&nbsp;</span>{{ $field }}</li>
-                            <?php $order_id ++; ?>
-                            @endforeach
-                        </ul>
-                    </div>
-                    
-                    <script>
-                        $( init );
-                        function init() {
-                        $( ".droppable-area1, .droppable-area2" ).sortable({
-                            connectWith: ".connected-sortable",
-                            stack: '.connected-sortable ul',
-                            update: function (event, ui) {
-                                //alert('update call');
-                                var new_order = new Array();
-                                $(".table_fields").each(function() {
-                                    new_order.push($(this).attr('id'));  
-                                });
-                                $.ajax({
-                                    type: "POST",
-                                    url: '{{ url('update_order') }}',
-                                    crossDomain: true,
-                                    data: { "new_order": new_order },
-                                    success: function(data) {
-                                    }
-                                });
-                                
-                            }
-                            }).disableSelection();
-                        }
-                    </script>
-                </div>
-            </div>
-            <div class="col-md-4 padding_middle">
-                <div class="label_setting">
-                    <div data-step="2" data-intro="Different color combination can be selected to change the look n feel of the One Page Quick Order page. Different options are given like background color, text color etc for each of buttons available in the section." data-position="right">
-                    <h3 class="sub-heading">Color Settings</h3>
-                    <div class="form-group">
-                        <!--Header Background Color-->
-                        <div>
-                        <p class="colorlabel">
-                            <label class="header-color" for="header_background_color">Header Background Color</label>
-                            {{-- <div class="help-tip">
-                                <p>Selected color will get apply for <b>Header Background</b>.</p>
-                            </div> --}}
-                        </p>
-                        <div class="cp2 input-group colorpicker-component"> 
-                            &nbsp;&nbsp;
-                            <input type="text" name="header_background_color" class="header_background_color" style="display: none;" @if(count($app_setting) > 0) value="{{$app_setting->header_background_color }}" @else value="" @endif>
-                        </div>
-                        </div>
-                        <br/>                        
-                        <!--Show Options Button Background Color -->
-                        <div>
-                        <p class="colorlabel">
-                            <label class="header-color" for="show_options_background_color">Show Options Button Background Color</label>
-                            {{-- <div class="help-tip">
-                                <p>Selected color will get apply for <b>Show Options Button Background</b>.</p>
-                            </div> --}}
-                        </p>
-                        <div class="cp2 input-group colorpicker-component"> 
-                            &nbsp;&nbsp;
-                            <input type="text" name="show_options_background_color" class="show_options_background_color" style="display: none;" @if(count($app_setting) > 0) value="{{$app_setting->show_options_background_color }}" @else value="" @endif>
-                        </div>
-                        </div>
-                        <br/>
-                        <!-- Add to Cart Button Background Color -->
-                        <div >
-                        <p class="colorlabel">
-                            <label class="header-color" for="add_to_cart_background_color">Add to Cart Button Background Color</label>
-                            {{-- <div class="help-tip">
-                                <p>Selected color will get apply for <b>Add to Cart Button Background</b>.</p>
-                            </div> --}}
-                        </p>
-                        <div class="cp2 input-group colorpicker-component">
-                            &nbsp;&nbsp;
-                            <input type="text" name="add_to_cart_background_color" class="add_to_cart_background_color" style="display: none;" @if(count($app_setting) > 0) value="{{$app_setting->add_to_cart_background_color }}" @else value="" @endif>
-                        </div>
-                        </div>
-                        <br/>                        
-                        <!--Show Options Button Background Color -->
-                        <div>
-                        <p class="colorlabel">
-                            <label class="header-color" for="show_options_text_color">Show Options Button Text Color</label>
-                            {{-- <div class="help-tip">
-                                <p>Selected color will get apply for <b>Show Options Button Text</b>.</p>
-                            </div> --}}
-                        </p>
-                        <div class="cp2 input-group colorpicker-component"> 
-                            &nbsp;&nbsp;
-                            <input type="text" name="show_options_text_color" class="show_options_text_color" style="display: none;" @if(count($app_setting) > 0) value="{{$app_setting->show_options_text_color }}" @else value="" @endif>
-                        </div>
-                        </div>
-                        <br/>
-                        <!-- Add to Cart Button Background Color -->
-                        <div>
-                        <p class="colorlabel">
-                            <label class="header-color" for="add_to_cart_text_color">Add to Cart Button Text Color</label>
-                            {{-- <div class="help-tip">
-                                <p>Selected color will get apply for <b>Add to Cart Button Text</b>.</p>
-                            </div> --}}
-                        </p>
-                        <div class="cp2 input-group colorpicker-component">
-                            &nbsp;&nbsp;
-                            <input type="text" name="add_to_cart_text_color" class="add_to_cart_text_color" style="display: none;" @if(count($app_setting) > 0) value="{{$app_setting->add_to_cart_text_color }}" @else value="" @endif>
-                        </div>
-                        </div>
-                        <br/>
-                        <!-- Sold Out Button Background Color -->
-                        <div >
-                        <p class="colorlabel">
-                            <label class="header-color" for="sold_out_background_color">Sold Out button Background Color</label>
-                            {{-- <div class="help-tip">
-                                <p>Selected color will get apply for <b>Sold Out button Background</b>.</p>
-                            </div> --}}
-                        </p>
-                        <div class="cp2 input-group colorpicker-component">
-                            &nbsp;&nbsp;
-                            <input type="text" name="sold_out_background_color" class="sold_out_background_color" style="display: none;" @if(count($app_setting) > 0) value="{{$app_setting->sold_out_background_color }}" @else value="" @endif>
-                        </div>
-                        </div>
-                        <br/>
-                        <!--Sold Out Button Text Color -->
-                        <div >
-                        <p class="colorlabel">
-                            <label class="header-color" for="sold_out_text_color">Sold Out button Text Color</label>
-                            {{-- <div class="help-tip">
-                                <p>Selected color will get apply for <b>Sold Out button Text</b>.</p>
-                            </div> --}}
-                        </p>
-                        <div class="cp2 input-group colorpicker-component"> 
-                            &nbsp;&nbsp;
-                            <input type="text" name="sold_out_text_color" class="sold_out_text_color" style="display: none;" @if(count($app_setting) > 0) value="{{$app_setting->sold_out_text_color }}" @else value="" @endif>
-                        </div>
-                        </div>
-                    </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4 padding_right" data-step="3" data-intro="This section will allow to change the labels of the action buttons which will provide idea to user about their usage and action.">
-                <div class="label_setting">
-                    <h3 class="sub-heading">Language Settings</h3>
-                    <div class="form-group">
-                        <label>Show Options Button Text *</label>
-                        {{-- <div class="help-tip">
-                            <p>Enter text to display on <b>Show Options Button</b>.</p>
-                        </div> --}}
-                        <input type="text" class="form-control" name ="show_options_text" @if(count($app_setting) > 0) value="{{$app_setting->show_options_text }}" @else value="" @endif required /> 
-                    </div>
-                    <div class="form-group">
-                        <label>Sold out Button Text *</label>
-                        {{-- <div class="help-tip">
-                            <p>Enter text to display on <b>Sold out Button</b>.</p>
-                        </div> --}}
-                        <input type="text" class="form-control" name ="sold_out_text"  @if(count($app_setting) > 0) value="{{$app_setting->sold_out_text }}" @else value="" @endif required /> 
-                    </div>
-                    <div class="form-group">
-                        <label>Add to Cart Button Text *</label>
-                        {{-- <div class="help-tip">
-                            <p>Enter text to display on <b>Add to Cart Button</b>.</p>
-                        </div> --}}
-                        <input type="text" class="form-control" name ="add_to_cart_text" @if(count($app_setting) > 0) value="{{$app_setting->add_to_cart_text }}" @else value="" @endif required /> 
-                    </div>
-                </div>
-                <div class="label_setting">
-                    <h3 class="sub-heading">The Quick order App Has Been Installed!</h3>
-                    <p>    
-                        <p>    
-                            The Quick order page for your store is located at below mentioned link:</br>    
-                            <b><a href="<?php
-                                if (Session::has('shop')) {    
-                                    echo "https://" . $store_name . "/pages/one-page-quick-order";
-                                } else {    
-                                    echo"#";
-                                }
-                                ?>" target="_blank">    
-                                    <?php
-                                    if (Session::has('shop')) {    
-                                        echo "https://" . session('shop') . "/pages/one-page-quick-order";
-                                    }
-                                    ?>        
-                                </a></b>    
-                        </p>    
-                        <p>    
-                            You can share this link with your customers or link to it from your store's navigation menu <b><a class="info_css" href="{{ asset('image/navigation.png') }}">See Example</a></b>    
-                        </p>    
-                        <p>    
-                            To edit or delete the page, visit the    
-                            <b><a href="<?php
-                                if (Session::has('shop')) {    
-                                    echo "https://" . session('shop') . "/admin/pages";
-                                }
-                                ?>" target="_blank">    
-                                    Pages section    
-                                </a></b>     
-                            in your Shopify Admin.    
-                        </p>        
-                        </p>  
-                </div>
-            </div>
-        </div>
-        <div class="padding_left save_settings_wrapper">
-            <input type="submit" name="save_settings" class="save_settings" value="Save" data-step="5" data-intro="Once all the information are entered,please use Save button to save all the details and get into effect."/>
-        </div>
-    </div>
+                    </article>
+                </section>
+                <footer>
+
+                </footer>
+            </main>
     
     <?php /*<div class="col-md-12 formcolor sticky_formcolor">
         <div class="shortcode_heading col-sm-12 ">
@@ -472,7 +425,56 @@ if (Session::has('shop')) {
         </div> 
     </div> */ ?>
 </form>
+<script>
+    $( init );
+    function init() {
+    $( ".droppable-area1, .droppable-area2" ).sortable({
+        connectWith: ".connected-sortable",
+        stack: '.connected-sortable ul',
+        update: function (event, ui) {
+            //alert('update call');
+            var new_order = new Array();
+            $(".table_fields").each(function() {
+                new_order.push($(this).attr('id'));  
+            });
+            $.ajax({
+                type: "POST",
+                url: '{{ url('update_order') }}',
+                crossDomain: true,
+                data: { "new_order": new_order },
+                success: function(data) {
+                }
+            });
+            
+    }
+    }).disableSelection();
+}
+</script>
+<script src="{{asset('js/new_design/spectrum.js')}}"></script>
+<script>
+    jQuery(".basic").spectrum();
+    jQuery(".override").spectrum({
+        color: "yellow"
+    });
+    jQuery(".startEmpty").spectrum({
+        allowEmpty: true
+    });
+</script>
+    <script>
+        jQuery(document).ready(function() {
 
+            jQuery('ul.tabs li').click(function() {
+                var tab_id = jQuery(this).attr('data-tab');
+
+                jQuery('ul.tabs li').removeClass('active');
+                jQuery('.tab-content').removeClass('active');
+
+                jQuery(this).addClass('active');
+                jQuery("#" + tab_id).addClass('active');
+            });
+
+        });
+    </script>
 <script>    
     function copy_shortcode()
     {

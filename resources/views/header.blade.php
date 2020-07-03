@@ -116,7 +116,7 @@
 <script src="{{ asset('js/jquery.copy-to-clipboard.js') }}"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
 <script src="{{ asset('js/jquery.magnific-popup.min.js') }}"></script>
-<script src="{{ asset('js/javascript.js') }}"></script>
+<!-- <script src="{{ asset('js/javascript.js') }}"></script> -->
 <script>
     $('.info_css').magnificPopup({
         type: 'image'

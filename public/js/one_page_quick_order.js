@@ -104,7 +104,7 @@ if (typeof jQuery == 'undefined') {
 
     }
 }
-
+// function bulk_order_list_view(){}
 function bulk_order_list_view() {
     var ProductlistDiv = $ztpl_one_page_quick_order('.zestard_bulk_order_list_view').length;
 

@@ -13,6 +13,8 @@
 
 Route::get('dashboard', 'callbackController@dashboard')->name('dashboard');
 
+Route::get('new_dashboard', 'callbackController@NewDashboard')->name('new_dashboard');
+
 Route::get('callback', 'callbackController@index')->name('callback');
 
 Route::get('redirect', 'callbackController@redirect')->name('redirect');
@@ -50,7 +52,7 @@ Route::any('product_list', 'hpisumController@index')->name('product_list');
 // Route::any('update_products', 'hpisumController@update_products')->name('update_products');
 
 Route::post('show_variants', 'FrontendController@show_variants')->middleware('cors')->name('show_variants');
-Route::get('get_all_product', 'FrontendController@get_all_product')->middleware('cors')->name('get_all_product');
+Route::get('get_all_product', 'FrontendController@get_all_product1')->middleware('cors')->name('get_all_product');
 
 Route::get('quick_order_dashboard_save', 'SettingsController@save')->name('quick_order_dashboard_save');
 Route::post('quick_order_dashboard_store', 'SettingsController@store')->name('quick_order_dashboard_store');
@@ -66,3 +68,5 @@ Route::any('frontend_quick_order', 'FrontendController@frontend2')->middleware('
 Route::any('activate_quick_order', 'SettingsController@activate_quick_order')->name('activate_quick_order');
 
 Route::get('quick_help', 'SettingsController@help')->name('quick_help');
+
+Route::get('get_all_product_test', 'FrontendController@get_all_product_test')->middleware('cors')->name('get_all_product_test');
