@@ -609,9 +609,6 @@ class FrontendController extends Controller {
 
         $key = 0; 
         $params = $this->prepareLinks($products);
-        $get_products['data'] = array();
-        $get_products['next'] = '';
-        $get_products['previous'] = ''; 
         foreach ($products->products as $row) {
 
             //image column

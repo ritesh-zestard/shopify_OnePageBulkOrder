@@ -1,4 +1,4 @@
-var base_path_bolv = "https://shopifydev.anujdalal.com/bulkorder-demo-new/";
+var base_path_bolv = "https://shopifydev.anujdalal.com/bulkorder/";
 //var $ztpl_one_page_quick_order = jQuery.noConflict();
 
 //var ztpl_one_page_quick_order = jQuery;

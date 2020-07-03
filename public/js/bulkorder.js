@@ -1,4 +1,4 @@
-var base_path_bulkorder = "https://shopifydev.anujdalal.com/bulkorder-demo-new/public/";
+var base_path_bulkorder = "https://shopifydev.anujdalal.com/bulkorder/public/";
 var result, $zestard_bulk_order = "";
 if (typeof jQuery == 'undefined' || Shopify.shop == "little-mango-deodorants.myshopify.com") {
     //alert('jQuery is Undefined');	

@@ -187,7 +187,7 @@ class callbackController extends Controller {
                         }
                     }
 
-                    $data = array('page' => array('title' => 'One Page Quick Order', 'body_html' => '<div class="zestard_bulk_order_list_view" store_encrypt="' . $finaly_encrypt . '" style="width: 100%; text-align: center;"><img style="margin: 0 auto;" width="130" height="130" src="https://shopifydev.anujdalal.com/bulkorder-demo-new/public/image/loader_new.svg" /></div><script src="https://shopifydev.anujdalal.com/bulkorder-demo-new/public/js/one_page_quick_order.js"></script>'));
+                    $data = array('page' => array('title' => 'One Page Quick Order', 'body_html' => '<div class="zestard_bulk_order_list_view" store_encrypt="' . $finaly_encrypt . '" style="width: 100%; text-align: center;"><img style="margin: 0 auto;" width="130" height="130" src="https://shopifydev.anujdalal.com/bulkorder/public/image/loader_new.svg" /></div><script src="https://shopifydev.anujdalal.com/bulkorder/public/js/one_page_quick_order.js"></script>'));
                     $url_create_page = $sh->call(['URL' => '/admin/pages.json', 'METHOD' => 'POST', 'DATA' => $data]);
 
                     //api call for get theme info
@@ -209,7 +209,7 @@ class callbackController extends Controller {
                     DB::table('field_sorting_details')->insert(['sort_order' => $sort_order, 'shop_id' => $shop_id]);
 
                     //api call for creating the app script tag 
-                    $script = $sh->call(['URL' => '/admin/script_tags.json', 'METHOD' => 'POST', 'DATA' => ['script_tag' => ['event' => 'onload', 'src' => 'https://shopifydev.anujdalal.com/bulkorder-demo-new/public/js/bulkorder.js', 'display_scope' => 'online_store']]]);
+                    $script = $sh->call(['URL' => '/admin/script_tags.json', 'METHOD' => 'POST', 'DATA' => ['script_tag' => ['event' => 'onload', 'src' => 'https://shopifydev.anujdalal.com/bulkorder/public/js/bulkorder.js', 'display_scope' => 'online_store']]]);
                     //$script_quick_order = $sh->call(['URL' => '/admin/script_tags.json', 'METHOD' => 'POST', 'DATA' => ['script_tag' => ['event' => 'onload', 'src' => 'https://zestardshop.com/shopifyapp/bulk_quick_order_dev/public/js/one_page_quick_order.js', 'display_scope' => 'online_store']]]);
 
                     session(['shop' => $shop]);
@@ -312,7 +312,7 @@ class callbackController extends Controller {
                     $sender = "support@zestard.com";
                     $sender_name = "Zestard Technologies";
                     $app_name = "One Page Bulk Order";
-                    $logo = 'https://shopifydev.anujdalal.com/bulkorder-demo-new/public/image/zestard-logo.png';
+                    $logo = 'https://shopifydev.anujdalal.com/bulkorder/public/image/zestard-logo.png';
                     $installation_follow_up_msg = '<html>
 
                         <head>

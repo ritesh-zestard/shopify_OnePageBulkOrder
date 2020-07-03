@@ -204,7 +204,7 @@
                             </a></b>   in your Shopify Admin.
                             </p>
                             <p>
-                                Your Store currency is <b>"{{ $store_detail->currency_code }}"</b> and your currency Symbol is <b>"&#36;"</b>
+                                Your Store currency is <b>"{{ $store_detail->currency_code }}"</b> and your currency Symbol is <b>"{{ $store_detail->symbol_html }}"</b>
                             </p>
                             <p></p>
                         </div>

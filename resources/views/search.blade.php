@@ -1,7 +1,7 @@
 <!-- Bootstrap core CSS -->
 
-<link rel="stylesheet" href="https://shopifydev.anujdalal.com/bulkorder-demo-new/public/css/bootstrap.css" >
-<script src="https://shopifydev.anujdalal.com/bulkorder-demo-new/public/js/money.js"></script>
+<link rel="stylesheet" href="https://shopifydev.anujdalal.com/bulkorder/public/css/bootstrap.css" >
+<script src="https://shopifydev.anujdalal.com/bulkorder/public/js/money.js"></script>
 <script>
 //  jQuery('.page-header').html('<h2>sdsd</h2>');
 //  if(typeof jQuery == 'undefined') {
@@ -43,7 +43,7 @@
         if (!Shopify.formatMoney) {
             var jq = document.createElement("script");
             jq.type = "text/javascript";
-            jq.src = "https://shopifydev.anujdalal.com/bulkorder-demo-new/public/js/money.js";
+            jq.src = "https://shopifydev.anujdalal.com/bulkorder/public/js/money.js";
             document.getElementsByTagName("head")[0].appendChild(jq);
         }
 
@@ -56,7 +56,7 @@
         var additional_css = "";
         //for reset all data
         $.ajax({
-            url: "https://shopifydev.anujdalal.com/bulkorder-demo-new/public/get-user-settings",
+            url: "https://shopifydev.anujdalal.com/bulkorder/public/get-user-settings",
             data: {shop: Shopify.shop},
             asunc: false,
             success: function (result)
@@ -105,7 +105,6 @@
             $.ajaxSetup({
                 async: false
             });
-
             out_of_stock = '<?php echo $shop_find['allow_out_of_stock_products_to_order'] ?>';
 
             $(".ztpl-varient").each(function () {
@@ -415,7 +414,6 @@
                         if (inventory == "shopify")
 
                         {
-
                             if (qty > parseInt(stock) && (parseInt(out_of_stock) == 0)) {
 
                                 if (qty >= 0 && parseInt(stock) != 0) {
@@ -531,7 +529,7 @@
 
                         calculate_total();
 
-                         if (parseInt(qty) > parseInt(stock)) {
+                         if (out_of_stock == '0' && (parseInt(qty) > parseInt(stock))) {
                             alert('You can not add more than stock');
                             $(this).val(parseInt(stock));
                             return false;
