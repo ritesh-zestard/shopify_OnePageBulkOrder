@@ -71,6 +71,7 @@ class FrontendController extends Controller {
 
         $sh = App::make('ShopifyAPI', ['API_KEY' => $app_settings->api_key, 'API_SECRET' => $app_settings->shared_secret, 'SHOP_DOMAIN' => $shop, 'ACCESS_TOKEN' => $select_store[0]->access_token]);
         $product_id = $request['product_id'];
+
         $url = 'https://' . $shop . '/admin/api/' . $this->apiVersion . '/products/' . $product_id . '.json';
         $row = $sh->callAdvance(['URL' => $url, 'METHOD' => 'GET'], FALSE);
         echo '<section class="items">';
