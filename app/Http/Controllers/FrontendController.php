@@ -55,7 +55,7 @@ class FrontendController extends Controller {
         //return view('front_view', ['products' => $get_products, 'app_config' => $app_config]);
     }
 
-    public function show_variants() {
+    public function show_variants(Request $request) {
         $shop = session('shop');
         $app_settings = DB::table('appsettings')->where('id', 1)->first();
         if ($shop == 'yoganastix.com') {
@@ -70,7 +70,7 @@ class FrontendController extends Controller {
         $app_config = DB::table('appconfig')->where('store_id', $select_store[0]->id)->first();
 
         $sh = App::make('ShopifyAPI', ['API_KEY' => $app_settings->api_key, 'API_SECRET' => $app_settings->shared_secret, 'SHOP_DOMAIN' => $shop, 'ACCESS_TOKEN' => $select_store[0]->access_token]);
-        $product_id = $_POST['product_id'];
+        $product_id = $request['product_id'];
         $url = 'https://' . $shop . '/admin/api/' . $this->apiVersion . '/' . $product_id . '.json';
         $row = $sh->callAdvance(['URL' => $url, 'METHOD' => 'GET'], FALSE);
         echo '<section class="items">';
@@ -225,6 +225,7 @@ class FrontendController extends Controller {
         if ($shop == 'yoganastix.com') {
             $shop = 'yoganastix.myshopify.com';
         }
+		
 
         if ($shop == 'hopsandnuts.com') {
             $shop = 'hops-and-nuts-craft-beer-snacks.myshopify.com';
@@ -232,6 +233,11 @@ class FrontendController extends Controller {
         if ($shop == 'baketreats.com') {
             $shop = 'baketreats-inc.myshopify.com';
         }
+		
+		if ($shop == 'servicepartsonline.com.au') {
+            $shop = 'servicepartsonline.myshopify.com';
+        }
+		
         $select_store = DB::table('usersettings')->where('store_name', $shop)->get();
 
         $app_config = DB::table('appconfig')->where('store_id', $select_store[0]->id)->first();
@@ -312,8 +318,8 @@ class FrontendController extends Controller {
                             $key++;
                         }
                         //dd($products);
-                    if (isset($product_list->headers['Link'])) {
-                        $next = $product_list->headers['Link'];
+                    if (isset($product_list->headers['link'])) {
+                        $next = $product_list->headers['link'];
                         $page_params = explode(',', $next);
                         if (isset($page_params[1])) {
                             $next_url = explode(',', $page_params[1]);
@@ -335,7 +341,8 @@ class FrontendController extends Controller {
                     } else {
                         $url = 'https://' . $shop . '/admin/api/' . $this->apiVersion . '/products.json?limit=' . $limit . '&page_info=' . $params['page_info'];
                     }
-                    $products = $sh->callAdvance(['URL' => $url, 'METHOD' => 'GET'], FALSE);
+					
+                    $products = $sh->callAdvance(['URL' => $url, 'METHOD' => 'GET'], FALSE); 
                     $i++;
                     foreach ($products->products as $row) {
                         //for image
@@ -379,8 +386,8 @@ class FrontendController extends Controller {
                         $get_products['data'][] = $new_row;
                         $key ++;
                     }
-                    if (isset($products->headers['Link'])) {
-                        $next = $products->headers['Link'];
+                    if (isset($products->headers['link'])) {
+                        $next = $products->headers['link'];
                         $page_params = explode(',', $next);
                         if (isset($page_params[1])) {
                             $next_url = explode(',', $page_params[1]);
@@ -566,6 +573,10 @@ class FrontendController extends Controller {
 
         if ($shop == 'baketreats.com') {
             $shop = 'baketreats-inc.myshopify.com';
+        }
+		
+		 if ($shop == 'servicepartsonline.com.au') {
+            $shop = 'servicepartsonline.myshopify.com';
         }
 
         $select_store = DB::table('usersettings')->where('store_name', $shop)->get();

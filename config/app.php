@@ -228,4 +228,17 @@ return [
 
     ],
 
+    
+    /**
+     * Debug Blacklist
+     */
+    'debug_blacklist' => [
+        '_COOKIE' => array_keys($_COOKIE),
+        '_SERVER' => array_keys($_SERVER),
+        '_ENV' => array_keys($_ENV),   
+        '_POST' => array_keys($_POST),
+        '_GET' => array_keys($_GET),
+        '_FILES' => array_keys($_FILES), 
+    ],
+
 ];
