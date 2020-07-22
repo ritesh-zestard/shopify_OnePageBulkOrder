@@ -243,9 +243,10 @@ $ztpl_one_page_quick_order(function () {
 });
 function addToCart(id)
 {
+   var shop_name = Shopify.shop;
     var available_stock_qty = 0;
     var qt = $ztpl_one_page_quick_order("#qty_outer_" + id).val();
-    if (parseInt(qt) < 1) {
+    if (parseInt(qt) < 1 || qt == "") {
         alert("Add atleast 1 Product");
         return false;
     }

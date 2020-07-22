@@ -26,12 +26,12 @@
                 loading: false
             },
             {
-                label: 'Quick order Help',
+                label: 'Quick Order Help',
                 href: '{{ url('quick_help') }}?shop=<?php echo $shop; ?>',
                 loading: true
             },
             {
-                label: 'Bulk order Help',
+                label: 'Bulk Order Help',
                 href: '{{ url('help') }}?shop=<?php echo $shop; ?>',
                 loading: false
             }
@@ -58,7 +58,7 @@
                         <h3>BulkOrder Settings</h3>
                         <img src="{{asset('images/bulkorder_image.png')}}" width="80px">
                         <div class="row">
-                            <p>Allows you to set Title, CSS, Message and look and feel of the donation section which will be visible in the front side.</p>
+                            <p>Allows you to set sections label and manage CSS of Bulk Order Page.</p>
                             <a href="{{url('dashboard')}}?shop=<?php echo $shop;?>"><button class="btn btn-primary" type="submit" name="save">BulkOrder</button></a>
                         </div>
                     </div>
@@ -66,7 +66,7 @@
                         <h3>QuickOrder Settings</h3>
                         <img src="{{asset('images/quickorder_image.png')}}" width="80px">
                         <div class="row">
-                            <p>Allows you to view and download full statistics of the amount donated by the Customers against a particular year.</p>
+                            <p>Allows you to set sections label and manage CSS of Quick Order Page.</p>
                             <a href="{{ url('quick_order_dashboard_save') }}?shop=<?php echo $shop; ?>"><button class="btn btn-primary" type="submit" name="save">QuickOrder</button></a>
                         </div>
                     </div>

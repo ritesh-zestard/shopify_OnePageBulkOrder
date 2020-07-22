@@ -26,7 +26,7 @@ if (!session('shop')) {
                         loading: false
                     },
                     {
-                        label: 'Bulk order Help',
+                        label: 'Bulk Order Help',
                         href: '{{ url('help') }}?shop=<?php echo $shop; ?>',
                         loading: false
                     },

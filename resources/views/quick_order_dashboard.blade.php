@@ -81,17 +81,17 @@ if (!session('shop')) {
                 // },
                 secondary: [
                     {
-                        label: 'Quick order Help',
+                        label: 'Quick Order Help',
                         href: '{{ url('quick_help') }}?shop=<?php echo $shop; ?>',
                         loading: true
                     },
                     {
-                        label: 'Bulk order Settings',
+                        label: 'Bulk Order Settings',
                         href: '{{ url('dashboard') }}?shop=<?php echo $shop; ?>',
                         loading: true
                     },
                     {
-                        label: 'Bulk order Help',
+                        label: 'Bulk Order Help',
                         href: '{{ url('help') }}?shop=<?php echo $shop; ?>',
                         loading: false
                     },

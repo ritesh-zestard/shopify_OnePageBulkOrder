@@ -27,7 +27,7 @@
                 loading: false
             },
             {
-                label: 'Quick order Help',
+                label: 'Quick Order Help',
                 href: '{{ url('quick_help') }}?shop=<?php echo $shop; ?>',
                 loading: true
             },
